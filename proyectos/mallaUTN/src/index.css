@@ -1,0 +1,82 @@
+body {
+    background-color: #ffefe8;
+    font-weight: bold;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+h1{
+    font-size: 40px;
+}
+
+h2{
+    font-size: 30px;
+}
+
+h3{
+    font-size: 25px;
+}
+
+.plan{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+
+}
+
+.materia button{
+    border-radius: 20px;
+    border: none;
+    display: flex;
+    box-shadow: 5px 5px 10px 2px;
+    gap: 10px;
+    margin-bottom: 20px;
+    height: 90px;
+    width: 200px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+    cursor: pointer;
+    font-weight: bold;
+  
+    border: dotted;
+    
+}
+
+
+.plan > .ano:nth-child(1) button{
+    filter: blur(0px);
+    border: none;
+    background-color: rgb(79, 160, 162);
+    
+}
+
+/* En tu archivo CSS global */
+.materia-container {
+  display: inline-block;
+  width: 100%;
+  margin: 4px 0;
+}
+
+@media (min-width: 600px) {
+  .materia-container {
+    width: calc(50% - 8px);
+  }
+}
+
+@media (min-width: 900px) {
+  .materia-container {
+    width: calc(33.333% - 8px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .materia-container {
+    width: calc(20% - 8px);
+  }
+}
+    
+
+
+
+        
+

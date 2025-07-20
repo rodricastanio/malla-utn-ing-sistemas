@@ -1,0 +1,155 @@
+/* App.css */
+.plan {
+
+  margin: auto;
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+  width: 100%;
+  max-width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 1rem;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+}
+
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.titulo img {
+  height: 60px;
+}
+
+.materia {
+  word-break: break-word;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+span {
+  color: black;
+}
+
+.ano {
+  border-radius: 8px;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3b7ff;
+}
+
+.materia button {
+  color: black
+}
+
+h3 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 0;
+  color: #000000;
+  font-size: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+
+
+/* ajustes para cel mas pequeños */
+@media (max-width: 479px) {
+
+  .plan{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .titulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto 80px;
+  }
+
+  .materia {
+    width: 130px;
+    margin: 2px;
+    display: grid;
+  }
+
+  .materias {
+    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    padding: 20px;
+  }
+
+  .ano {
+    margin-left: 5px;
+    width: 90%;
+    background-color: #f3b7ff;
+   
+  }
+
+  .ano button {
+    width: 90%;
+  }
+
+}
+
+
+
+/* ajustes entre 468x768 */
+@media (min-width: 480px) and (max-width: 768px) {
+
+  .plan{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .titulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto 80px;
+  }
+
+  .materia {
+    width: 150px;
+    margin: 2px;
+    display: grid;
+  }
+
+  .materias {
+    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    padding-left: 18px;
+  }
+
+  .ano {
+    margin-left: 5px;
+    width: 90%;
+    background-color: #f3b7ff;
+  }
+
+  .ano button {
+    width: 110%;
+  }
+
+}
+
+
