@@ -4,9 +4,9 @@ function Materia({ materia, iAno, iMateria, onClick }) {
 
   // Estilos base
   const baseStyles = {
-    backgroundColor: materia.aprobada ? '#77d37aff' : 
-                    materia.desbloqueada ? '#f5f2c6ff' : '#fcfcc6ff',
-    color: materia.desbloqueada ? 'black' : 'black',
+    backgroundColor: materia.aprobada ? '#A5D6A7' : 
+                    materia.desbloqueada ? '#FFF9C4' : '#F8BBD0',
+    color: '#000',
     padding: '10px 15px',
     border: 'none',
     borderRadius: '4px',

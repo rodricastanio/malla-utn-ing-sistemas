@@ -54,7 +54,7 @@ span {
   padding: 1rem;
   justify-content: center;
   align-items: center;
-  background-color: #f3b7ff;
+  background-color: #E3D7F5;
 }
 
 .materia button {
@@ -106,7 +106,6 @@ h2 {
   .ano {
     margin-left: 5px;
     width: 90%;
-    background-color: #f3b7ff;
    
   }
 
@@ -148,7 +147,7 @@ h2 {
   .ano {
     margin-left: 5px;
     width: 90%;
-    background-color: #f3b7ff;
+
   }
 
   .ano button {
