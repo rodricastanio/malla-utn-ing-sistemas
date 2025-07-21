@@ -1,4 +1,9 @@
 /* App.css */
+body {
+  background-color: white !important;
+  color: black !important;
+}
+
 .plan {
 
   margin: auto;
