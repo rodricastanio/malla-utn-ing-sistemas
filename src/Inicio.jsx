@@ -54,7 +54,7 @@ function Inicio() {
     return (
         <div>
             <div className="titulo">
-                <img src="/malla-utn-ing-sistemas/img/UTN-LOGO.png" alt="Logo UTN" />
+                <img src="img/UTN-LOGO.png" alt="Logo UTN" />
                 <h1>Ingeniería en Sistemas de Información</h1>
             </div>
             <h2>Plan de estudios <span>(UTN)</span></h2>
