@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react'
 import { GraduationCap, BadgeCheck, Clock3, TrendingUp } from 'lucide-react'
 import { usePlan } from './hooks/usePlan'
+import { useAuth } from './hooks/useAuth'
 import Header from './components/Header'
 import NivelSection from './components/NivelSection'
 import ProgressBar from './components/ProgressBar'
 import MateriaModal from './components/MateriaModal'
 import MateriaCard from './components/MateriaCard'
+import LoginModal from './components/LoginModal'
 import { NIVELES, claveNucleo, claveElectiva } from './lib/plan'
 import './index.css'
 
@@ -25,9 +27,11 @@ const PPS_MATERIA = {
 }
 
 export default function App() {
-  const { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema } = usePlan()
+  const { user, cargando, signInGoogle, signInEmail, signUpEmail, signOut } = useAuth()
+  const { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema } = usePlan(user)
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null)
+  const [modalLogin, setModalLogin] = useState(false)
 
   const nombrePorId = useMemo(() => {
     const mapa = new Map()
@@ -96,8 +100,18 @@ export default function App() {
 
   return (
     <div className="app">
+      {cargando && <div className="auth-carga" aria-hidden="true" />}
       <div className="sticky-head">
-        <Header query={query} setQuery={setQuery} tema={tema} setTema={setTema} onReset={confirmarReset} />
+        <Header
+          query={query}
+          setQuery={setQuery}
+          tema={tema}
+          setTema={setTema}
+          onReset={confirmarReset}
+          user={user}
+          onLogin={() => setModalLogin(true)}
+          onLogout={signOut}
+        />
         <div className="progress-rail">
           <div className="progress-rail-inner">
             <ProgressBar valor={promosNucleo} maximo={totalNucleo} etiqueta="Progreso global" />
@@ -185,6 +199,16 @@ export default function App() {
           nombrePorId={nombrePorId}
           nota={notas?.[modal.keyBase]}
           setNota={setNota}
+        />
+      )}
+
+      {modalLogin && (
+        <LoginModal
+          onCerrar={() => setModalLogin(false)}
+          user={user}
+          signInGoogle={signInGoogle}
+          signInEmail={signInEmail}
+          signUpEmail={signUpEmail}
         />
       )}
     </div>

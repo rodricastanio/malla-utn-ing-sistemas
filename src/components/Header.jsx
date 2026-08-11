@@ -1,6 +1,29 @@
-import { Moon, Sun, RotateCcw, Search } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Moon, Sun, RotateCcw, Search, LogIn, LogOut, ChevronDown } from 'lucide-react'
 
-export default function Header({ query, setQuery, tema, setTema, onReset }) {
+function Avatar({ user }) {
+  const url = user.user_metadata?.avatar_url
+  const nombre = user.user_metadata?.full_name || user.email || '?'
+  const inicial = (nombre[0] || '?').toUpperCase()
+  return url ? (
+    <img className="avatar-img" src={url} alt="" referrerPolicy="no-referrer" />
+  ) : (
+    <span className="avatar-inicial">{inicial}</span>
+  )
+}
+
+export default function Header({ query, setQuery, tema, setTema, onReset, user, onLogin, onLogout }) {
+  const [menuAbierto, setMenuAbierto] = useState(false)
+  const menuRef = useRef(null)
+
+  useEffect(() => {
+    const cerrar = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuAbierto(false)
+    }
+    document.addEventListener('mousedown', cerrar)
+    return () => document.removeEventListener('mousedown', cerrar)
+  }, [])
+
   return (
     <header className="topbar">
       <div className="topbar-brand">
@@ -40,6 +63,37 @@ export default function Header({ query, setQuery, tema, setTema, onReset }) {
         >
           <RotateCcw size={18} />
         </button>
+
+        {user ? (
+          <div className="user-menu" ref={menuRef}>
+            <button
+              className="user-btn"
+              onClick={() => setMenuAbierto((v) => !v)}
+              aria-label="Cuenta"
+              title="Cuenta"
+            >
+              <Avatar user={user} />
+              <ChevronDown size={14} className={menuAbierto ? 'chevron-abierto' : ''} />
+            </button>
+            {menuAbierto && (
+              <div className="user-dropdown">
+                <div className="user-dropdown-info">
+                  <strong>{user.user_metadata?.full_name || 'Cuenta'}</strong>
+                  <span>{user.email}</span>
+                </div>
+                <button className="user-dropdown-item" onClick={onLogout}>
+                  <LogOut size={15} />
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className="btn-ingresar" onClick={onLogin}>
+            <LogIn size={15} />
+            Ingresar
+          </button>
+        )}
       </div>
     </header>
   )

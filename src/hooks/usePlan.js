@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import plan from '../data/plan.json'
 import { calcularEstados } from '../lib/plan'
+import { supabase } from '../lib/supabase'
 
 const STORAGE_KEY = 'malla-utn-intentos-v2'
 const NOTAS_KEY = 'malla-utn-notas-v2'
@@ -29,10 +30,18 @@ function cargarTema() {
   return 'light'
 }
 
-export function usePlan() {
+export function usePlan(user) {
   const [intentos, setIntentos] = useState(() => cargar(STORAGE_KEY))
   const [notas, setNotas] = useState(() => cargar(NOTAS_KEY))
   const [tema, setTema] = useState(cargarTema)
+
+  const userRef = useRef(user)
+  userRef.current = user
+  const intentosRef = useRef(intentos)
+  intentosRef.current = intentos
+  const notasRef = useRef(notas)
+  notasRef.current = notas
+  const sincronizando = useRef(false)
 
   useEffect(() => {
     try {
@@ -58,6 +67,59 @@ export function usePlan() {
       /* ignorar */
     }
   }, [tema])
+
+  const empujar = useCallback(async (nuevosIntentos, nuevasNotas) => {
+    const u = userRef.current
+    if (!u || !supabase) return
+    await supabase
+      .from('perfiles')
+      .upsert(
+        {
+          id: u.id,
+          intentos: nuevosIntentos ?? {},
+          notas: nuevasNotas ?? {},
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'id' }
+      )
+  }, [])
+
+  useEffect(() => {
+    if (!user || !supabase) return undefined
+    let activo = true
+    sincronizando.current = true
+    ;(async () => {
+      const { data, error } = await supabase
+        .from('perfiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle()
+      if (!activo) return
+      sincronizando.current = false
+      if (error) return
+      const localInt = intentosRef.current
+      const localNot = notasRef.current
+      if (data) {
+        const mergeInt = { ...localInt, ...(data.intentos ?? {}) }
+        const mergeNot = { ...localNot, ...(data.notas ?? {}) }
+        setIntentos(mergeInt)
+        setNotas(mergeNot)
+        empujar(mergeInt, mergeNot)
+      } else {
+        empujar(localInt, localNot)
+      }
+    })()
+    return () => {
+      activo = false
+    }
+  }, [user, empujar])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!sincronizando.current) empujar(intentosRef.current, notasRef.current)
+    }, 600)
+    return () => clearTimeout(timer)
+  }, [intentos, notas, empujar])
 
   const { efectivos, alcanzables } = useMemo(
     () => calcularEstados(intentos, plan),
