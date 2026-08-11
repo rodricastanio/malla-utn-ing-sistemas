@@ -96,7 +96,14 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header query={query} setQuery={setQuery} tema={tema} setTema={setTema} onReset={confirmarReset} />
+      <div className="sticky-head">
+        <Header query={query} setQuery={setQuery} tema={tema} setTema={setTema} onReset={confirmarReset} />
+        <div className="progress-rail">
+          <div className="progress-rail-inner">
+            <ProgressBar valor={promosNucleo} maximo={totalNucleo} etiqueta="Progreso global" />
+          </div>
+        </div>
+      </div>
 
       <div className="hero">
         <p className="hero-eyebrow">UTN · Ingeniería en Sistemas de Información</p>
@@ -107,7 +114,6 @@ export default function App() {
         <p className="hero-sub">
           Seguí tu avance: marcá lo que cursás y lo que promocionás. Las correlativas se desbloquean solas.
         </p>
-        <ProgressBar valor={promosNucleo} maximo={totalNucleo} etiqueta="Progreso global" />
         {resumen}
       </div>
 

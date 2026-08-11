@@ -83,11 +83,41 @@ body {
   flex-direction: column;
 }
 
-/* ── Topbar (macOS vibrancy) ─────────────────────────── */
-.topbar {
+/* ── Sticky header (topbar + progreso global) ────────── */
+.sticky-head {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 40;
+}
+
+.progress-rail {
+  background: var(--topbar-fondo);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--separador);
+  padding: 0.5rem 1.5rem 0.65rem;
+}
+
+.progress-rail-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.progress-rail .progress {
+  max-width: none;
+  margin: 0;
+}
+
+.progress-rail .progress-head {
+  margin-bottom: 0.3rem;
+}
+
+.progress-rail .progress-track {
+  height: 6px;
+}
+
+/* ── Topbar (macOS vibrancy) ─────────────────────────── */
+.topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -321,8 +351,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.5rem 2.5rem;
   flex-wrap: wrap;
+}
+
+.nivel-head .progress {
+  flex: 1 1 260px;
+  max-width: 480px;
+  margin-left: auto;
 }
 
 .nivel-titulo {
@@ -1030,7 +1066,18 @@ body {
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 720px) {
   .topbar {
-    padding: 0.55rem 1rem;
+    padding: calc(0.5rem + env(safe-area-inset-top, 0px)) 1rem 0.55rem;
+  }
+
+  .progress-rail {
+    padding: 0.4rem 1rem 0.5rem;
+  }
+
+  .nivel-head .progress {
+    min-width: 100%;
+    flex-basis: 100%;
+    max-width: none;
+    margin-left: 0;
   }
 
   .search input {
