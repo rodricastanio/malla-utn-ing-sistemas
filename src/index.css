@@ -52,6 +52,11 @@
   --borde-tarjeta: 1px solid rgba(255, 255, 255, 0.09);
 }
 
+:root[data-theme='dark'] .topbar-logo,
+:root[data-theme='dark'] .pantalla-login-logo {
+  filter: invert(1);
+}
+
 * {
   box-sizing: border-box;
 }
