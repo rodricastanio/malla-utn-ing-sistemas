@@ -27,8 +27,9 @@ const PPS_MATERIA = {
 }
 
 export default function App() {
-  const { user, cargando, signInGoogle, signInEmail, signUpEmail, signOut } = useAuth()
-  const { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema } = usePlan(user)
+  const { user, cargando, esInvitado, signInGoogle, signInEmail, signUpEmail, signOut, entrarComoInvitado } =
+    useAuth()
+  const { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema } = usePlan(user, esInvitado)
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null)
 
@@ -99,8 +100,15 @@ export default function App() {
 
   if (cargando) return <div className="auth-carga" aria-hidden="true" />
 
-  if (!user) {
-    return <PantallaLogin signInGoogle={signInGoogle} signInEmail={signInEmail} signUpEmail={signUpEmail} />
+  if (!user && !esInvitado) {
+    return (
+      <PantallaLogin
+        signInGoogle={signInGoogle}
+        signInEmail={signInEmail}
+        signUpEmail={signUpEmail}
+        entrarComoInvitado={entrarComoInvitado}
+      />
+    )
   }
 
   return (
@@ -113,6 +121,7 @@ export default function App() {
           setTema={setTema}
           onReset={confirmarReset}
           user={user}
+          esInvitado={esInvitado}
           onLogout={signOut}
         />
         <div className="progress-rail">

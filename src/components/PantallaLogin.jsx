@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Mail, Lock, UserPlus, LogIn } from 'lucide-react'
+import { Mail, Lock, UserPlus, LogIn, Eye } from 'lucide-react'
 
-export default function PantallaLogin({ signInGoogle, signInEmail, signUpEmail }) {
+export default function PantallaLogin({ signInGoogle, signInEmail, signUpEmail, entrarComoInvitado }) {
   const [modo, setModo] = useState('entrar')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -139,6 +139,16 @@ export default function PantallaLogin({ signInGoogle, signInEmail, signUpEmail }
             </>
           )}
         </p>
+
+        <div className="login-divisor">
+          <span>o</span>
+        </div>
+
+        <button className="btn-invitado" onClick={entrarComoInvitado}>
+          <Eye size={16} />
+          Explorar como invitado
+        </button>
+        <p className="login-invitado-hint">Sin cuenta y sin guardar nada: solo para chusmear.</p>
       </div>
 
       <p className="pantalla-login-pie">UTN · Ingeniería en Sistemas de Información</p>

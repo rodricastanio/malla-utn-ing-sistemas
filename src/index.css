@@ -1307,6 +1307,36 @@ body::before {
   transform: scale(0.98);
 }
 
+.btn-invitado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  border: 1px dashed var(--separador);
+  background: transparent;
+  color: var(--texto-secundario);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.25s var(--suave), color 0.25s var(--suave), background 0.25s var(--suave);
+}
+
+.btn-invitado:hover {
+  border-color: var(--accento);
+  color: var(--accento);
+  background: var(--accento-suave);
+}
+
+.login-invitado-hint {
+  margin: 0.6rem 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--texto-secundario);
+}
+
 .btn-login:disabled {
   opacity: 0.6;
   cursor: default;

@@ -6,15 +6,26 @@ import { supabase } from '../lib/supabase'
 const STORAGE_KEY = 'malla-utn-intentos-v2'
 const NOTAS_KEY = 'malla-utn-notas-v2'
 const THEME_KEY = 'malla-utn-tema'
+const SUFIXO_INVITADO = '-invitado'
 
-function cargar(key) {
+function cargar(key, esInvitado) {
+  const store = esInvitado ? sessionStorage : localStorage
   try {
-    const raw = localStorage.getItem(key)
+    const raw = store.getItem(esInvitado ? key + SUFIXO_INVITADO : key)
     if (raw) return JSON.parse(raw)
   } catch {
     /* ignorar */
   }
   return {}
+}
+
+function guardar(key, valor, esInvitado) {
+  const store = esInvitado ? sessionStorage : localStorage
+  try {
+    store.setItem(esInvitado ? key + SUFIXO_INVITADO : key, JSON.stringify(valor))
+  } catch {
+    /* ignorar */
+  }
 }
 
 function cargarTema() {
@@ -37,9 +48,9 @@ function cargarTema() {
   return tema
 }
 
-export function usePlan(user) {
-  const [intentos, setIntentos] = useState(() => cargar(STORAGE_KEY))
-  const [notas, setNotas] = useState(() => cargar(NOTAS_KEY))
+export function usePlan(user, esInvitado = false) {
+  const [intentos, setIntentos] = useState(() => cargar(STORAGE_KEY, esInvitado))
+  const [notas, setNotas] = useState(() => cargar(NOTAS_KEY, esInvitado))
   const [tema, setTema] = useState(cargarTema)
 
   const userRef = useRef(user)
@@ -49,21 +60,21 @@ export function usePlan(user) {
   const notasRef = useRef(notas)
   notasRef.current = notas
   const sincronizando = useRef(false)
+  const esInvitadoRef = useRef(esInvitado)
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(intentos))
-    } catch {
-      /* ignorar */
-    }
+    if (esInvitadoRef.current === esInvitado) return
+    esInvitadoRef.current = esInvitado
+    setIntentos(cargar(STORAGE_KEY, esInvitado))
+    setNotas(cargar(NOTAS_KEY, esInvitado))
+  }, [esInvitado])
+
+  useEffect(() => {
+    guardar(STORAGE_KEY, intentos, esInvitadoRef.current)
   }, [intentos])
 
   useEffect(() => {
-    try {
-      localStorage.setItem(NOTAS_KEY, JSON.stringify(notas))
-    } catch {
-      /* ignorar */
-    }
+    guardar(NOTAS_KEY, notas, esInvitadoRef.current)
   }, [notas])
 
   useEffect(() => {

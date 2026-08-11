@@ -1,7 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
-import { Moon, Sun, RotateCcw, Search, LogOut, ChevronDown } from 'lucide-react'
+import { Moon, Sun, RotateCcw, Search, LogOut, ChevronDown, User } from 'lucide-react'
 
-function Avatar({ user }) {
+function Avatar({ user, esInvitado }) {
+  if (esInvitado || !user) {
+    return (
+      <span className="avatar-inicial">
+        <User size={15} />
+      </span>
+    )
+  }
   const url = user.user_metadata?.avatar_url
   const nombre = user.user_metadata?.full_name || user.email || '?'
   const inicial = (nombre[0] || '?').toUpperCase()
@@ -12,7 +19,7 @@ function Avatar({ user }) {
   )
 }
 
-export default function Header({ query, setQuery, tema, setTema, onReset, user, onLogout }) {
+export default function Header({ query, setQuery, tema, setTema, onReset, user, esInvitado, onLogout }) {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const menuRef = useRef(null)
 
@@ -76,13 +83,20 @@ export default function Header({ query, setQuery, tema, setTema, onReset, user, 
           </button>
           {menuAbierto && (
             <div className="user-dropdown">
-              <div className="user-dropdown-info">
-                <strong>{user.user_metadata?.full_name || 'Cuenta'}</strong>
-                <span>{user.email}</span>
-              </div>
+              {esInvitado ? (
+                <div className="user-dropdown-info">
+                  <strong>Invitado</strong>
+                  <span>Podés explorar sin guardar nada</span>
+                </div>
+              ) : (
+                <div className="user-dropdown-info">
+                  <strong>{user?.user_metadata?.full_name || 'Cuenta'}</strong>
+                  <span>{user?.email}</span>
+                </div>
+              )}
               <button className="user-dropdown-item" onClick={onLogout}>
                 <LogOut size={15} />
-                Cerrar sesión
+                {esInvitado ? 'Salir del modo invitado' : 'Cerrar sesión'}
               </button>
             </div>
           )}
