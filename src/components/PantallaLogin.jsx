@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { X, Mail, Lock, UserPlus, LogIn } from 'lucide-react'
+import { Mail, Lock, UserPlus, LogIn } from 'lucide-react'
 
-export default function LoginModal({ onCerrar, user, signInGoogle, signInEmail, signUpEmail }) {
+export default function PantallaLogin({ signInGoogle, signInEmail, signUpEmail }) {
   const [modo, setModo] = useState('entrar')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -10,16 +10,14 @@ export default function LoginModal({ onCerrar, user, signInGoogle, signInEmail, 
   const [ocupado, setOcupado] = useState(false)
 
   useEffect(() => {
-    if (user) onCerrar()
-  }, [user, onCerrar])
-
-  useEffect(() => {
-    const manejarTecla = (e) => {
-      if (e.key === 'Escape') onCerrar()
+    const params = new URLSearchParams(window.location.search)
+    const err = params.get('error')
+    if (err) {
+      const desc = params.get('error_description')
+      setError(desc ? `${err}: ${desc}` : err)
+      window.history.replaceState({}, '', window.location.pathname)
     }
-    window.addEventListener('keydown', manejarTecla)
-    return () => window.removeEventListener('keydown', manejarTecla)
-  }, [onCerrar])
+  }, [])
 
   const limpiar = () => {
     setError(null)
@@ -54,14 +52,15 @@ export default function LoginModal({ onCerrar, user, signInGoogle, signInEmail, 
   }
 
   return (
-    <div className="overlay" onClick={onCerrar}>
-      <div className="modal modal-login" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-        <button className="modal-close" onClick={onCerrar} aria-label="Cerrar">
-          <X size={18} />
-        </button>
+    <div className="pantalla-login">
+      <div className="pantalla-login-card">
+        <img className="pantalla-login-logo" src="img/UTN-LOGO.png" alt="Logo UTN" />
 
-        <h2 className="modal-titulo">{modo === 'entrar' ? 'Iniciar sesión' : 'Crear cuenta'}</h2>
-        <p className="modal-sub">Guardá tu progreso y sincronizalo entre tus dispositivos.</p>
+        <h1 className="pantalla-login-titulo">Plan de estudios</h1>
+        <p className="pantalla-login-sub">
+          Ingeniería en Sistemas de Información — Ingresá para ver tu malla y que tu progreso se
+          sincronice entre tus dispositivos.
+        </p>
 
         <button className="btn-google" onClick={conGoogle} disabled={ocupado}>
           <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -141,6 +140,8 @@ export default function LoginModal({ onCerrar, user, signInGoogle, signInEmail, 
           )}
         </p>
       </div>
+
+      <p className="pantalla-login-pie">UTN · Ingeniería en Sistemas de Información</p>
     </div>
   )
 }

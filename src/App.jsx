@@ -7,7 +7,7 @@ import NivelSection from './components/NivelSection'
 import ProgressBar from './components/ProgressBar'
 import MateriaModal from './components/MateriaModal'
 import MateriaCard from './components/MateriaCard'
-import LoginModal from './components/LoginModal'
+import PantallaLogin from './components/PantallaLogin'
 import { NIVELES, claveNucleo, claveElectiva } from './lib/plan'
 import './index.css'
 
@@ -31,7 +31,6 @@ export default function App() {
   const { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema } = usePlan(user)
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null)
-  const [modalLogin, setModalLogin] = useState(false)
 
   const nombrePorId = useMemo(() => {
     const mapa = new Map()
@@ -98,9 +97,14 @@ export default function App() {
     </div>
   )
 
+  if (cargando) return <div className="auth-carga" aria-hidden="true" />
+
+  if (!user) {
+    return <PantallaLogin signInGoogle={signInGoogle} signInEmail={signInEmail} signUpEmail={signUpEmail} />
+  }
+
   return (
     <div className="app">
-      {cargando && <div className="auth-carga" aria-hidden="true" />}
       <div className="sticky-head">
         <Header
           query={query}
@@ -109,7 +113,6 @@ export default function App() {
           setTema={setTema}
           onReset={confirmarReset}
           user={user}
-          onLogin={() => setModalLogin(true)}
           onLogout={signOut}
         />
         <div className="progress-rail">
@@ -182,8 +185,8 @@ export default function App() {
 
       <footer className="footer">
         <p>
-          Seguimiento de plan de estudios — Ingeniería en Sistemas de Información. Tu progreso se guarda en este
-          navegador.
+          Seguimiento de plan de estudios — Ingeniería en Sistemas de Información. Tu progreso se
+          guarda en tu cuenta y se sincroniza entre tus dispositivos.
         </p>
       </footer>
 
@@ -199,16 +202,6 @@ export default function App() {
           nombrePorId={nombrePorId}
           nota={notas?.[modal.keyBase]}
           setNota={setNota}
-        />
-      )}
-
-      {modalLogin && (
-        <LoginModal
-          onCerrar={() => setModalLogin(false)}
-          user={user}
-          signInGoogle={signInGoogle}
-          signInEmail={signInEmail}
-          signUpEmail={signUpEmail}
         />
       )}
     </div>

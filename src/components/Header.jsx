@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Moon, Sun, RotateCcw, Search, LogIn, LogOut, ChevronDown } from 'lucide-react'
+import { Moon, Sun, RotateCcw, Search, LogOut, ChevronDown } from 'lucide-react'
 
 function Avatar({ user }) {
   const url = user.user_metadata?.avatar_url
@@ -12,7 +12,7 @@ function Avatar({ user }) {
   )
 }
 
-export default function Header({ query, setQuery, tema, setTema, onReset, user, onLogin, onLogout }) {
+export default function Header({ query, setQuery, tema, setTema, onReset, user, onLogout }) {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const menuRef = useRef(null)
 
@@ -64,36 +64,29 @@ export default function Header({ query, setQuery, tema, setTema, onReset, user, 
           <RotateCcw size={18} />
         </button>
 
-        {user ? (
-          <div className="user-menu" ref={menuRef}>
-            <button
-              className="user-btn"
-              onClick={() => setMenuAbierto((v) => !v)}
-              aria-label="Cuenta"
-              title="Cuenta"
-            >
-              <Avatar user={user} />
-              <ChevronDown size={14} className={menuAbierto ? 'chevron-abierto' : ''} />
-            </button>
-            {menuAbierto && (
-              <div className="user-dropdown">
-                <div className="user-dropdown-info">
-                  <strong>{user.user_metadata?.full_name || 'Cuenta'}</strong>
-                  <span>{user.email}</span>
-                </div>
-                <button className="user-dropdown-item" onClick={onLogout}>
-                  <LogOut size={15} />
-                  Cerrar sesión
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <button className="btn-ingresar" onClick={onLogin}>
-            <LogIn size={15} />
-            Ingresar
+        <div className="user-menu" ref={menuRef}>
+          <button
+            className="user-btn"
+            onClick={() => setMenuAbierto((v) => !v)}
+            aria-label="Cuenta"
+            title="Cuenta"
+          >
+            <Avatar user={user} />
+            <ChevronDown size={14} className={menuAbierto ? 'chevron-abierto' : ''} />
           </button>
-        )}
+          {menuAbierto && (
+            <div className="user-dropdown">
+              <div className="user-dropdown-info">
+                <strong>{user.user_metadata?.full_name || 'Cuenta'}</strong>
+                <span>{user.email}</span>
+              </div>
+              <button className="user-dropdown-item" onClick={onLogout}>
+                <LogOut size={15} />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   )
