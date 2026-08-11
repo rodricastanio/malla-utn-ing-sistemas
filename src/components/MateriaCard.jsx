@@ -55,7 +55,7 @@ export default function MateriaCard({ materia, estado, alcanzable, keyBase, fija
 
   return (
     <div
-      className={`card card-e${estado}${bloqueada ? ' card-top' : ''}`}
+      className={`card card-e${estado}`}
       onClick={promover}
       onContextMenu={(e) => {
         e.preventDefault()
@@ -72,11 +72,7 @@ export default function MateriaCard({ materia, estado, alcanzable, keyBase, fija
       }}
     >
       <div className="card-top">
-        <span className={`badge badge-c${materia.cuatrimestre ?? 0}`}>
-          {materia.cuatrimestre != null ? `${materia.cuatrimestre}º cuatr.` : esPps ? 'Obligatoria' : 'Anual'}
-        </span>
         <div className="card-top-acciones">
-          {nota != null && <span className="nota-chip">{nota}</span>}
           <span className="card-horas">{esPps ? '200 hs' : horasMateria(materia)}</span>
           <button
             className="info-btn"
@@ -96,9 +92,19 @@ export default function MateriaCard({ materia, estado, alcanzable, keyBase, fija
       <h4 className="card-titulo">{materia.nombre}</h4>
 
       <div className="card-tags">
+        <span className={`badge badge-c${materia.cuatrimestre ?? 0}`}>
+          {materia.cuatrimestre != null ? `${materia.cuatrimestre}º cuatr.` : 'Anual'}
+        </span>
         {materia.integradora && <span className="tag tag-integradora">Integradora</span>}
         {esPps && <span className="tag tag-pps">PPS</span>}
       </div>
+
+      {nota != null && (
+        <div className="card-nota">
+          <span className="card-nota-label">Nota:</span>
+          <span className="card-nota-valor">{nota}</span>
+        </div>
+      )}
 
       <div className="card-foot">
         <span className="card-estado">
