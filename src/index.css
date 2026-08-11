@@ -59,6 +59,13 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+.card,
+[role='button'] {
+  touch-action: manipulation;
 }
 
 html,
@@ -69,10 +76,7 @@ body {
 
 body {
   background-color: var(--fondo);
-  background-image: radial-gradient(1200px 600px at 20% -10%, rgba(0, 122, 255, 0.06), transparent 60%),
-    radial-gradient(1000px 600px at 90% 15%, rgba(175, 82, 222, 0.05), transparent 55%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  isolation: isolate;
   color: var(--texto);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
@@ -80,6 +84,17 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
   transition: background-color 0.4s var(--suave), color 0.4s var(--suave);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(1200px 600px at 20% -10%, rgba(0, 122, 255, 0.06), transparent 60%),
+    radial-gradient(1000px 600px at 90% 15%, rgba(175, 82, 222, 0.05), transparent 55%);
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 .app {
@@ -352,6 +367,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 620px;
 }
 
 .nivel-head {
@@ -1419,10 +1436,15 @@ body {
 @media (max-width: 720px) {
   .topbar {
     padding: calc(0.5rem + env(safe-area-inset-top, 0px)) 1rem 0.55rem;
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    backdrop-filter: saturate(180%) blur(10px);
   }
 
   .progress-rail {
     padding: 0.4rem 1rem 0.5rem;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--superficie);
   }
 
   .nivel-head .progress {
@@ -1516,6 +1538,25 @@ body {
 @media (hover: none) {
   .tooltip {
     display: none;
+  }
+
+  .card:hover {
+    transform: none;
+    box-shadow: var(--sombra);
+  }
+
+  .info-btn:hover,
+  .icon-btn:hover,
+  .modal-close:hover {
+    transform: none;
+  }
+
+  .step:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .user-btn:hover {
+    border-color: var(--separador);
   }
 }
 

@@ -3,6 +3,11 @@ import { ESTADOS, claveNucleo, horasMateria } from '../lib/plan'
 
 const ICONOS = [Lock, Loader, BookOpen, BadgeCheck]
 
+const SOPORTA_HOVER =
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(hover: hover)').matches
+
 function ReqItem({ nombre, ok }) {
   return (
     <li className={ok ? 'tooltip-req ok' : 'tooltip-req'}>
@@ -18,16 +23,20 @@ export default function MateriaCard({ materia, estado, alcanzable, keyBase, fija
   const bloqueada = alcanzable === 0
   const nota = notas?.[keyBase]
 
-  const reqCursar = (materia.correlativas_cursar ?? []).map((id) => ({
-    id,
-    nombre: nombrePorId?.get(id) ?? `Materia ${id}`,
-    ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 2,
-  }))
-  const reqAprobar = (materia.correlativas_aprobar ?? []).map((id) => ({
-    id,
-    nombre: nombrePorId?.get(id) ?? `Materia ${id}`,
-    ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 2,
-  }))
+  const reqCursar = SOPORTA_HOVER
+    ? (materia.correlativas_cursar ?? []).map((id) => ({
+        id,
+        nombre: nombrePorId?.get(id) ?? `Materia ${id}`,
+        ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 2,
+      }))
+    : []
+  const reqAprobar = SOPORTA_HOVER
+    ? (materia.correlativas_aprobar ?? []).map((id) => ({
+        id,
+        nombre: nombrePorId?.get(id) ?? `Materia ${id}`,
+        ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 2,
+      }))
+    : []
 
   const promover = () => {
     if (estado === 3) {
@@ -107,38 +116,40 @@ export default function MateriaCard({ materia, estado, alcanzable, keyBase, fija
         )}
       </div>
 
-      <div className="tooltip" role="tooltip">
-        <div className="tooltip-head">
-          <span className="tooltip-nombre">{materia.nombre}</span>
-          <span className={`tooltip-estado e${estado}`}>{ESTADOS[estado].etiqueta}</span>
-        </div>
-        <div className="tooltip-grupos">
-          <div className="tooltip-grupo">
-            <strong>Para cursar</strong>
-            {reqCursar.length ? (
-              <ul>
-                {reqCursar.map((r) => (
-                  <ReqItem key={r.id} {...r} />
-                ))}
-              </ul>
-            ) : (
-              <p className="tooltip-sinreq">Sin requisitos</p>
-            )}
+      {SOPORTA_HOVER && (
+        <div className="tooltip" role="tooltip">
+          <div className="tooltip-head">
+            <span className="tooltip-nombre">{materia.nombre}</span>
+            <span className={`tooltip-estado e${estado}`}>{ESTADOS[estado].etiqueta}</span>
           </div>
-          <div className="tooltip-grupo">
-            <strong>Para aprobar</strong>
-            {reqAprobar.length ? (
-              <ul>
-                {reqAprobar.map((r) => (
-                  <ReqItem key={r.id} {...r} />
-                ))}
-              </ul>
-            ) : (
-              <p className="tooltip-sinreq">Sin requisitos</p>
-            )}
+          <div className="tooltip-grupos">
+            <div className="tooltip-grupo">
+              <strong>Para cursar</strong>
+              {reqCursar.length ? (
+                <ul>
+                  {reqCursar.map((r) => (
+                    <ReqItem key={r.id} {...r} />
+                  ))}
+                </ul>
+              ) : (
+                <p className="tooltip-sinreq">Sin requisitos</p>
+              )}
+            </div>
+            <div className="tooltip-grupo">
+              <strong>Para aprobar</strong>
+              {reqAprobar.length ? (
+                <ul>
+                  {reqAprobar.map((r) => (
+                    <ReqItem key={r.id} {...r} />
+                  ))}
+                </ul>
+              ) : (
+                <p className="tooltip-sinreq">Sin requisitos</p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

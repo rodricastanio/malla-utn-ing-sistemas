@@ -18,16 +18,23 @@ function cargar(key) {
 }
 
 function cargarTema() {
+  let tema
   try {
-    const guardado = localStorage.getItem(THEME_KEY)
-    if (guardado) return guardado
+    tema = localStorage.getItem(THEME_KEY)
   } catch {
     /* ignorar */
   }
-  if (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark'
+  if (!tema) {
+    if (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      tema = 'dark'
+    } else {
+      tema = 'light'
+    }
   }
-  return 'light'
+  if (typeof document !== 'undefined') {
+    document.documentElement.dataset.theme = tema
+  }
+  return tema
 }
 
 export function usePlan(user) {
