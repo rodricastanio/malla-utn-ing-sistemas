@@ -21,12 +21,12 @@ export default function MateriaCard({ materia, estado, alcanzable, keyBase, fija
   const reqCursar = (materia.correlativas_cursar ?? []).map((id) => ({
     id,
     nombre: nombrePorId?.get(id) ?? `Materia ${id}`,
-    ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 3,
+    ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 2,
   }))
   const reqAprobar = (materia.correlativas_aprobar ?? []).map((id) => ({
     id,
     nombre: nombrePorId?.get(id) ?? `Materia ${id}`,
-    ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 3,
+    ok: (efectivos?.[claveNucleo(id)] ?? 0) >= 2,
   }))
 
   const promover = () => {

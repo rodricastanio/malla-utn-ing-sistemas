@@ -13,16 +13,12 @@ function resolver(efectivos, ids) {
 }
 
 function alcanzarNivel(efectivos, m) {
-  let r = 0
   const cursar = resolver(efectivos, m.correlativas_cursar)
   const aprobar = resolver(efectivos, m.correlativas_aprobar)
 
-  if (cursar.length === 0 || cursar.every((s) => s >= 3)) r = 1
-  if (r === 1) {
-    r = 2
-    if (aprobar.length === 0 || aprobar.every((s) => s >= 3)) r = 3
-  }
-  return r
+  if (cursar.length !== 0 && !cursar.every((s) => s >= 2)) return 0
+  if (aprobar.length !== 0 && !aprobar.every((s) => s >= 2)) return 2
+  return 3
 }
 
 export function calcularEstados(intentos, plan) {

@@ -19,7 +19,7 @@ function ListaCorrelativas({ titulo, ids, nombrePorId, efectivos }) {
       <ul className="correl-list">
         {ids.map((id) => {
           const estado = efectivos[claveNucleo(id)] ?? 0
-          const ok = estado >= 3
+          const ok = estado >= 2
           const Icono = ICONO_ESTADO[estado] ?? Lock
           return (
             <li key={id} className={ok ? 'correl ok' : 'correl'}>
