@@ -1,0 +1,76 @@
+{
+  "carrera": "Ingeniería en Sistemas",
+  "institucion": "FRENTE - Fuerza Renovadora Tecnológica",
+  "practica_profesional_supervisada": {
+    "horas": 200,
+    "correlativas_cursar": [],
+    "correlativas_aprobar": []
+  },
+  "materias_nucleo": [
+    { "id": 1, "nombre": "Análisis Matemático I", "nivel": 1, "cuatrimestre": null, "horas_anuales": 5, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 2, "nombre": "Álgebra y Geometría Analítica", "nivel": 1, "cuatrimestre": null, "horas_anuales": 5, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 3, "nombre": "Física I", "nivel": 1, "cuatrimestre": null, "horas_anuales": 5, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 4, "nombre": "Inglés I", "nivel": 1, "cuatrimestre": null, "horas_anuales": 2, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 5, "nombre": "Lógica y Estructuras Discretas", "nivel": 1, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 6, "nombre": "Algoritmos y Estructuras de Datos", "nivel": 1, "cuatrimestre": null, "horas_anuales": 5, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 7, "nombre": "Arquitecturas de Computadoras", "nivel": 1, "cuatrimestre": null, "horas_anuales": 4, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 8, "nombre": "Sistemas y Procesos de Negocio", "nivel": 1, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+
+    { "id": 9, "nombre": "Análisis Matemático II", "nivel": 2, "cuatrimestre": null, "horas_anuales": 5, "horas_cuatrimestrales": null, "correlativas_cursar": [1, 2], "correlativas_aprobar": [], "integradora": false },
+    { "id": 10, "nombre": "Física II", "nivel": 2, "cuatrimestre": null, "horas_anuales": 5, "horas_cuatrimestrales": null, "correlativas_cursar": [1, 3], "correlativas_aprobar": [], "integradora": false },
+    { "id": 11, "nombre": "Ingeniería y Sociedad", "nivel": 2, "cuatrimestre": null, "horas_anuales": 2, "horas_cuatrimestrales": null, "correlativas_cursar": [], "correlativas_aprobar": [], "integradora": false },
+    { "id": 12, "nombre": "Inglés II", "nivel": 2, "cuatrimestre": null, "horas_anuales": 2, "horas_cuatrimestrales": null, "correlativas_cursar": [4], "correlativas_aprobar": [], "integradora": false },
+    { "id": 13, "nombre": "Sintaxis y Semántica del Lenguaje", "nivel": 2, "cuatrimestre": 1, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [5, 6], "correlativas_aprobar": [], "integradora": false },
+    { "id": 14, "nombre": "Paradigmas de Programación", "nivel": 2, "cuatrimestre": 2, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [5, 6], "correlativas_aprobar": [], "integradora": false },
+    { "id": 15, "nombre": "Sistemas Operativos", "nivel": 2, "cuatrimestre": null, "horas_anuales": 4, "horas_cuatrimestrales": null, "correlativas_cursar": [7], "correlativas_aprobar": [], "integradora": false },
+    { "id": 16, "nombre": "Análisis de Sistemas de Información", "nivel": 2, "cuatrimestre": null, "horas_anuales": 6, "horas_cuatrimestrales": null, "correlativas_cursar": [6, 8], "correlativas_aprobar": [], "integradora": true },
+
+    { "id": 17, "nombre": "Probabilidades y Estadística", "nivel": 3, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [1, 2], "correlativas_aprobar": [], "integradora": false },
+    { "id": 18, "nombre": "Economía", "nivel": 3, "cuatrimestre": 2, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [], "correlativas_aprobar": [1, 2], "integradora": false },
+    { "id": 19, "nombre": "Bases de Datos", "nivel": 3, "cuatrimestre": 1, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [13, 16], "correlativas_aprobar": [5, 6], "integradora": false },
+    { "id": 20, "nombre": "Desarrollo de Software", "nivel": 3, "cuatrimestre": 2, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [14, 16], "correlativas_aprobar": [5, 6], "integradora": false },
+    { "id": 21, "nombre": "Comunicación de Datos", "nivel": 3, "cuatrimestre": 1, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [], "correlativas_aprobar": [3, 7], "integradora": false },
+    { "id": 22, "nombre": "Análisis Numérico", "nivel": 3, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [9], "correlativas_aprobar": [1, 2], "integradora": false },
+    { "id": 23, "nombre": "Diseño de Sistemas de Información", "nivel": 3, "cuatrimestre": null, "horas_anuales": 6, "horas_cuatrimestrales": null, "correlativas_cursar": [14, 16], "correlativas_aprobar": [4, 6, 8], "integradora": true },
+
+    { "id": 24, "nombre": "Legislación", "nivel": 4, "cuatrimestre": null, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [11], "correlativas_aprobar": [], "integradora": false },
+    { "id": 25, "nombre": "Ingeniería y Calidad de Software", "nivel": 4, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [19, 20, 23], "correlativas_aprobar": [13, 14], "integradora": false },
+    { "id": 26, "nombre": "Redes de Datos", "nivel": 4, "cuatrimestre": 2, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [15, 21], "correlativas_aprobar": [], "integradora": false },
+    { "id": 27, "nombre": "Investigación Operativa", "nivel": 4, "cuatrimestre": null, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [17, 22], "correlativas_aprobar": [], "integradora": false },
+    { "id": 28, "nombre": "Simulación", "nivel": 4, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [17], "correlativas_aprobar": [9], "integradora": false },
+    { "id": 29, "nombre": "Tecnologías para la Automatización", "nivel": 4, "cuatrimestre": 2, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [10, 22], "correlativas_aprobar": [9], "integradora": false },
+    { "id": 30, "nombre": "Administración de Sistemas de Información", "nivel": 4, "cuatrimestre": null, "horas_anuales": 6, "horas_cuatrimestrales": null, "correlativas_cursar": [18, 23], "correlativas_aprobar": [16], "integradora": true },
+
+    { "id": 31, "nombre": "Inteligencia Artificial", "nivel": 5, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [28], "correlativas_aprobar": [17, 22], "integradora": false },
+    { "id": 32, "nombre": "Ciencia de Datos", "nivel": 5, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [28], "correlativas_aprobar": [17, 19], "integradora": false },
+    { "id": 33, "nombre": "Sistemas de Gestión", "nivel": 5, "cuatrimestre": null, "horas_anuales": 4, "horas_cuatrimestrales": null, "correlativas_cursar": [18, 27], "correlativas_aprobar": [23], "integradora": false },
+    { "id": 34, "nombre": "Gestión Gerencial", "nivel": 5, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [24, 30], "correlativas_aprobar": [18], "integradora": false },
+    { "id": 35, "nombre": "Seguridad en los Sistemas de Información", "nivel": 5, "cuatrimestre": 2, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [26, 30], "correlativas_aprobar": [20, 21], "integradora": false },
+    { "id": 36, "nombre": "Proyecto Final", "nivel": 5, "cuatrimestre": null, "horas_anuales": 6, "horas_cuatrimestrales": null, "correlativas_cursar": [25, 26, 30], "correlativas_aprobar": [12, 20, 23], "integradora": true }
+  ],
+  "electivas_requeridas_por_nivel": [
+    { "nivel": 3, "horas_anuales": 4 },
+    { "nivel": 4, "horas_anuales": 6 },
+    { "nivel": 5, "horas_anuales": 10 }
+  ],
+  "materias_electivas": [
+    { "id": "E1", "nombre": "Sistemas de Tiempo Real", "nivel": 3, "cuatrimestre": 2, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [15], "correlativas_aprobar": [7] },
+    { "id": "E2", "nombre": "Tecnología y Gestión Web", "nivel": 3, "cuatrimestre": 1, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [13, 15], "correlativas_aprobar": [6] },
+    { "id": "E3", "nombre": "Sistemas de Transmisión y Redes Inalámbricas", "nivel": 3, "cuatrimestre": 2, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [9], "correlativas_aprobar": [7] },
+    { "id": "E4", "nombre": "Responsabilidad Social e Institucional", "nivel": 3, "cuatrimestre": 1, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [8, 16], "correlativas_aprobar": [] },
+    { "id": "E5", "nombre": "Comunicación Profesional", "nivel": 3, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [11], "correlativas_aprobar": [8] },
+
+    { "id": "E6", "nombre": "Administración de Base de Datos", "nivel": 4, "cuatrimestre": 2, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [19], "correlativas_aprobar": [15] },
+    { "id": "E7", "nombre": "Desarrollo de Software Cloud", "nivel": 4, "cuatrimestre": 2, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [15, 20, 23], "correlativas_aprobar": [13, 14] },
+    { "id": "E8", "nombre": "Diseño Inclusivo para Usuarios con Discapacidad", "nivel": 4, "cuatrimestre": 1, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [23], "correlativas_aprobar": [16] },
+    { "id": "E9", "nombre": "Metodologías Ágiles", "nivel": 4, "cuatrimestre": 2, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [19, 20, 23], "correlativas_aprobar": [16] },
+    { "id": "E10", "nombre": "Tecnologías para la Explotación de la Información", "nivel": 4, "cuatrimestre": 1, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [17, 23], "correlativas_aprobar": [14] },
+    { "id": "E11", "nombre": "Aplicaciones Móviles", "nivel": 4, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [14, 23], "correlativas_aprobar": [6] },
+
+    { "id": "E12", "nombre": "Ingeniería en Calidad", "nivel": 5, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": null, "correlativas_cursar": [30], "correlativas_aprobar": [23] },
+    { "id": "E13", "nombre": "Protocolos y Seguridad en Redes Inalámbricas", "nivel": 5, "cuatrimestre": 2, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [21, 26], "correlativas_aprobar": [9, 10] },
+    { "id": "E14", "nombre": "Sistemas en la Industria 4.0", "nivel": 5, "cuatrimestre": 2, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [19, 21, 25, 26], "correlativas_aprobar": [7] },
+    { "id": "E15", "nombre": "Tecnologías de Información para la Gestión Empresarial", "nivel": 5, "cuatrimestre": 1, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [25], "correlativas_aprobar": [23] },
+    { "id": "E16", "nombre": "Emprendedorismo", "nivel": 5, "cuatrimestre": null, "horas_anuales": 2, "horas_cuatrimestrales": null, "correlativas_cursar": [18, 24], "correlativas_aprobar": [] }
+  ]
+}
