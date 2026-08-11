@@ -118,6 +118,8 @@ body {
 
 /* ── Topbar (macOS vibrancy) ─────────────────────────── */
 .topbar {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -857,6 +859,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.6rem;
+  padding-right: 2.5rem;
 }
 
 .modal-horas {
@@ -981,6 +984,10 @@ body {
 .step:disabled {
   cursor: not-allowed;
   opacity: 0.4;
+}
+
+.step.activo {
+  opacity: 1;
 }
 
 .step-1.activo {
