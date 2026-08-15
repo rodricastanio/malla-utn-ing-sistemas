@@ -80,6 +80,23 @@ export function usePlan(user, esInvitado = false) {
   const accentoRef = useRef(accento)
   const esInvitadoRef = useRef(esInvitado)
 
+  const empujar = useCallback(async (nuevosIntentos, nuevasNotas, nuevoAcento) => {
+    const u = userRef.current
+    if (!u || !supabase) return
+    await supabase
+      .from('perfiles')
+      .upsert(
+        {
+          id: u.id,
+          intentos: nuevosIntentos ?? {},
+          notas: nuevasNotas ?? {},
+          accento: nuevoAcento ?? accentoRef.current ?? null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'id' }
+      )
+  }, [])
+
   useEffect(() => {
     if (esInvitadoRef.current === esInvitado) return
     esInvitadoRef.current = esInvitado
@@ -117,23 +134,6 @@ export function usePlan(user, esInvitado = false) {
       empujar(intentosRef.current, notasRef.current, accento)
     }
   }, [accento, user, empujar])
-
-  const empujar = useCallback(async (nuevosIntentos, nuevasNotas, nuevoAcento) => {
-    const u = userRef.current
-    if (!u || !supabase) return
-    await supabase
-      .from('perfiles')
-      .upsert(
-        {
-          id: u.id,
-          intentos: nuevosIntentos ?? {},
-          notas: nuevasNotas ?? {},
-          accento: nuevoAcento ?? accentoRef.current ?? null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'id' }
-      )
-  }, [])
 
   useEffect(() => {
     if (!user || !supabase) return undefined
