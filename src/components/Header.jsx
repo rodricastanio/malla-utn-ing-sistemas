@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Moon, Sun, RotateCcw, Search, LogOut, ChevronDown, User, Palette, Check } from 'lucide-react'
+import { Moon, Sun, RotateCcw, LogOut, ChevronDown, User, Palette, Check } from 'lucide-react'
 
 const ACENTOS = [
   { id: 'azul', nombre: 'Azul', color: '#007aff' },
@@ -34,7 +34,7 @@ function Avatar({ user, esInvitado }) {
   )
 }
 
-export default function Header({ query, setQuery, tema, setTema, accento, setAccento, onReset, user, esInvitado, onLogout }) {
+export default function Header({ tema, setTema, accento, setAccento, onReset, user, esInvitado, onLogout }) {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [paletaAbierta, setPaletaAbierta] = useState(false)
   const menuRef = useRef(null)
@@ -75,17 +75,6 @@ export default function Header({ query, setQuery, tema, setTema, accento, setAcc
       </div>
 
       <div className="topbar-acciones">
-        <div className="search">
-          <Search size={15} />
-          <input
-            type="search"
-            placeholder="Buscar materia…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value.toLowerCase())}
-            aria-label="Buscar materia"
-          />
-        </div>
-
         <button
           className="icon-btn"
           onClick={() => setTema(tema === 'dark' ? 'light' : 'dark')}

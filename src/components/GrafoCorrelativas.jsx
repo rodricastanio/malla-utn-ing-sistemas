@@ -66,6 +66,7 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
   const punteros = useRef(new Map())
   const gesto = useRef(null)
   const movidoRef = useRef(false)
+  const ultimoTap = useRef(null)
   const [hover, setHover] = useState(null)
 
   const K_MIN = 0.3
@@ -193,12 +194,34 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
   }
 
   const onPointerEnd = (e) => {
+    const eraUltimo = punteros.current.size <= 1
     punteros.current.delete(e.pointerId)
     if (punteros.current.size < 2) {
       const resto = [...punteros.current.values()][0]
       gesto.current = resto
         ? { tipo: 'pan', x: resto.x, y: resto.y, vx: view.x, vy: view.y }
         : null
+    }
+    if (!eraUltimo || movidoRef.current || punteros.current.size > 0) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const t = document.elementFromPoint(e.clientX, e.clientY)?.closest('.grafo-nodo')
+    if (t) {
+      ultimoTap.current = null
+      const nodo = grafo.nodos.find((n) => n.key === t.dataset.key)
+      if (nodo) onAbrir(nodo.materia, nodo.key)
+      return
+    }
+    const ahora = Date.now()
+    const prev = ultimoTap.current
+    if (
+      prev &&
+      ahora - prev.tiempo < 300 &&
+      Math.hypot(e.clientX - prev.x, e.clientY - prev.y) < 40
+    ) {
+      ultimoTap.current = null
+      aplicarZoom(1.7, e.clientX - rect.left, e.clientY - rect.top)
+    } else {
+      ultimoTap.current = { x: e.clientX, y: e.clientY, tiempo: ahora }
     }
   }
 
@@ -214,8 +237,8 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
             Mapa de correlativas
           </h2>
           <p className="grafo-sub">
-            Arrastrá para mover · scroll para acercar · click en una materia para ver sus detalles y
-            correlativas.
+            Arrastrá para mover · pellizcá o usá los botones para acercar · tocá una materia para ver sus
+            detalles y correlativas.
           </p>
         </div>
         <div className="grafo-acciones">
@@ -301,6 +324,7 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
                 return (
                   <g
                     key={nodo.key}
+                    data-key={nodo.key}
                     className={[
                       'grafo-nodo',
                       CLASE_ESTADO[estado],
@@ -314,15 +338,12 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
                       .filter(Boolean)
                       .join(' ')}
                     transform={`translate(${pos.x}, ${pos.y})`}
-                    onClick={() => {
-                      if (!movidoRef.current) onAbrir(nodo.materia, nodo.key)
-                    }}
                     onMouseEnter={() => setHover(nodo.key)}
                     onMouseLeave={() => setHover(null)}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
-                      if ((e.key === 'Enter' || e.key === ' ') && !movidoRef.current) {
+                      if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
                         onAbrir(nodo.materia, nodo.key)
                       }

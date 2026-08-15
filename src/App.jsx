@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays } from 'lucide-react'
+import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays, Search, X } from 'lucide-react'
 import { usePlan } from './hooks/usePlan'
 import { useAuth } from './hooks/useAuth'
 import { useRecordatorios } from './hooks/useRecordatorios'
@@ -86,8 +86,6 @@ export default function App() {
     <div className="app">
       <div className="sticky-head">
         <Header
-          query={query}
-          setQuery={setQuery}
           tema={tema}
           setTema={setTema}
           accento={accento}
@@ -136,6 +134,26 @@ export default function App() {
 
       {vista === 'malla' && (
         <main className="contenido">
+          <div className="malla-search">
+            <Search size={16} />
+            <input
+              type="search"
+              placeholder="Buscar materia en la malla…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value.toLowerCase())}
+              aria-label="Buscar materia en la malla"
+            />
+            {query && (
+              <button
+                className="malla-search-clear"
+                onClick={() => setQuery('')}
+                aria-label="Limpiar búsqueda"
+              >
+                <X size={15} />
+              </button>
+            )}
+          </div>
+
           {NIVELES.map((n) => {
             const nucleo = plan.materias_nucleo.filter((m) => m.nivel === n.numero)
             const electivas = plan.materias_electivas.filter((m) => m.nivel === n.numero)

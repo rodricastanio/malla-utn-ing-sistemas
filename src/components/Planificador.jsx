@@ -238,9 +238,12 @@ function ModoPromedio({ plan, efectivos, notas }) {
                   {res.porFecha.notaMinima.toFixed(1)} <small>nota mínima</small>
                 </div>
                 <p className="planif-detalle">
-                  Hasta {MESES[mes - 1]} {anio} podés hacer <strong>{res.porFecha.nMax}</strong> materias (
-                  {res.porFecha.cuatrimestres} cuatr.). Aprobándolas con nota mínima{' '}
-                  <strong>{res.porFecha.notaMinima.toFixed(1)}</strong> llegás a {objetivo}.
+                  Hasta <strong>{MESES[mes - 1]} {anio}</strong> hay {res.porFecha.cuatrimestres}{' '}
+                  cuatrimestres, unas <strong>{res.porFecha.nMax}</strong> materias.
+                </p>
+                <p className="planif-detalle ok">
+                  Aprobándolas con <strong>{res.porFecha.notaMinima.toFixed(1)}</strong> llegás al promedio{' '}
+                  <strong>{objetivo}</strong>.
                 </p>
               </>
             ) : (

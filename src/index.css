@@ -2027,6 +2027,52 @@ body::before {
   gap: 2.25rem;
 }
 
+.malla-search {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 14px;
+  border: var(--borde-tarjeta);
+  background: var(--superficie);
+  box-shadow: var(--sombra);
+  color: var(--texto-secundario);
+  transition: box-shadow 0.2s var(--suave), border-color 0.2s var(--suave);
+}
+
+.malla-search:focus-within {
+  border-color: var(--accento);
+  box-shadow: 0 0 0 3px var(--accento-suave);
+}
+
+.malla-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--texto);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.malla-search input::placeholder {
+  color: var(--texto-secundario);
+}
+
+.malla-search-clear {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border: none;
+  border-radius: 50%;
+  background: var(--gris-suave);
+  color: var(--texto-secundario);
+  cursor: pointer;
+}
+
 .nivel {
   display: flex;
   flex-direction: column;
@@ -3449,19 +3495,45 @@ body::before {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
+  .planif-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
   .planif-card,
   .cal-card {
     padding: 1rem;
   }
 
+  .planif-valor {
+    font-size: 2rem;
+  }
+
   .cal-form-campo input,
   .cal-form-campo textarea,
-  .planif-campo input {
+  .planif-campo input,
+  .malla-search input {
     font-size: 16px;
   }
 
   .cal-dia {
     aspect-ratio: 1 / 1.05;
+  }
+
+  .ayuda-popover {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-width: none;
+    z-index: 120;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  }
+
+  .ayuda-popover::before {
+    display: none;
   }
 }
 
