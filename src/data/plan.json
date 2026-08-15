@@ -34,7 +34,7 @@
     { "id": 23, "nombre": "Diseño de Sistemas de Información", "nivel": 3, "cuatrimestre": null, "horas_anuales": 6, "horas_cuatrimestrales": null, "correlativas_cursar": [14, 16], "correlativas_aprobar": [4, 6, 8], "integradora": true },
 
     { "id": 24, "nombre": "Legislación", "nivel": 4, "cuatrimestre": null, "horas_anuales": 2, "horas_cuatrimestrales": 4, "correlativas_cursar": [11], "correlativas_aprobar": [], "integradora": false },
-    { "id": 25, "nombre": "Ingeniería y Calidad de Software", "nivel": 4, "cuatrimestre": null, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [19, 20, 23], "correlativas_aprobar": [13, 14], "integradora": false },
+    { "id": 25, "nombre": "Ingeniería y Calidad de Software", "nivel": 4, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [19, 20, 23], "correlativas_aprobar": [13, 14], "integradora": false },
     { "id": 26, "nombre": "Redes de Datos", "nivel": 4, "cuatrimestre": 2, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [15, 21], "correlativas_aprobar": [], "integradora": false },
     { "id": 27, "nombre": "Investigación Operativa", "nivel": 4, "cuatrimestre": null, "horas_anuales": 4, "horas_cuatrimestrales": 8, "correlativas_cursar": [17, 22], "correlativas_aprobar": [], "integradora": false },
     { "id": 28, "nombre": "Simulación", "nivel": 4, "cuatrimestre": 1, "horas_anuales": 3, "horas_cuatrimestrales": 6, "correlativas_cursar": [17], "correlativas_aprobar": [9], "integradora": false },

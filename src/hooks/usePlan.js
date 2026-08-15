@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 const STORAGE_KEY = 'malla-utn-intentos-v2'
 const NOTAS_KEY = 'malla-utn-notas-v2'
 const THEME_KEY = 'malla-utn-tema'
+const ACENTO_KEY = 'malla-utn-accento'
 const SUFIXO_INVITADO = '-invitado'
 
 function cargar(key, esInvitado) {
@@ -48,10 +49,25 @@ function cargarTema() {
   return tema
 }
 
+function cargarAcento() {
+  let acento
+  try {
+    acento = localStorage.getItem(ACENTO_KEY)
+  } catch {
+    /* ignorar */
+  }
+  if (!acento) acento = 'azul'
+  if (typeof document !== 'undefined') {
+    document.documentElement.dataset.accento = acento
+  }
+  return acento
+}
+
 export function usePlan(user, esInvitado = false) {
   const [intentos, setIntentos] = useState(() => cargar(STORAGE_KEY, esInvitado))
   const [notas, setNotas] = useState(() => cargar(NOTAS_KEY, esInvitado))
   const [tema, setTema] = useState(cargarTema)
+  const [accento, setAccento] = useState(cargarAcento)
 
   const userRef = useRef(user)
   userRef.current = user
@@ -79,12 +95,23 @@ export function usePlan(user, esInvitado = false) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = tema
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) meta.setAttribute('content', tema === 'dark' ? '#000000' : '#f2f2f7')
     try {
       localStorage.setItem(THEME_KEY, tema)
     } catch {
       /* ignorar */
     }
   }, [tema])
+
+  useEffect(() => {
+    document.documentElement.dataset.accento = accento
+    try {
+      localStorage.setItem(ACENTO_KEY, accento)
+    } catch {
+      /* ignorar */
+    }
+  }, [accento])
 
   const empujar = useCallback(async (nuevosIntentos, nuevasNotas) => {
     const u = userRef.current
@@ -170,5 +197,5 @@ export function usePlan(user, esInvitado = false) {
     setNotas({})
   }, [])
 
-  return { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema }
+  return { plan, efectivos, alcanzables, fijar, setNota, notas, reset, tema, setTema, accento, setAccento }
 }

@@ -1,5 +1,20 @@
 import { useState, useRef, useEffect } from 'react'
-import { Moon, Sun, RotateCcw, Search, LogOut, ChevronDown, User } from 'lucide-react'
+import { Moon, Sun, RotateCcw, Search, LogOut, ChevronDown, User, Palette, Check } from 'lucide-react'
+
+const ACENTOS = [
+  { id: 'azul', nombre: 'Azul', color: '#007aff' },
+  { id: 'celeste', nombre: 'Celeste', color: '#2f9ce0' },
+  { id: 'lila', nombre: 'Lila', color: '#8e5fd7' },
+  { id: 'rosa', nombre: 'Rosa pastel', color: '#e0649a' },
+  { id: 'verdeAgua', nombre: 'Verde agua', color: '#2fb59a' },
+  { id: 'amarillo', nombre: 'Amarillo pastel', color: '#d9a521' },
+  { id: 'turquesa', nombre: 'Turquesa', color: '#12b0c9' },
+  { id: 'menta', nombre: 'Menta', color: '#2ec27e' },
+  { id: 'coral', nombre: 'Coral', color: '#e2554d' },
+  { id: 'fucsia', nombre: 'Fucsia', color: '#d6459b' },
+  { id: 'naranja', nombre: 'Naranja', color: '#e08a2e' },
+  { id: 'violeta', nombre: 'Violeta', color: '#7b5cd6' },
+]
 
 function Avatar({ user, esInvitado }) {
   if (esInvitado || !user) {
@@ -19,9 +34,11 @@ function Avatar({ user, esInvitado }) {
   )
 }
 
-export default function Header({ query, setQuery, tema, setTema, onReset, user, esInvitado, onLogout }) {
+export default function Header({ query, setQuery, tema, setTema, accento, setAccento, onReset, user, esInvitado, onLogout }) {
   const [menuAbierto, setMenuAbierto] = useState(false)
+  const [paletaAbierta, setPaletaAbierta] = useState(false)
   const menuRef = useRef(null)
+  const paletaRef = useRef(null)
 
   useEffect(() => {
     const cerrar = (e) => {
@@ -30,6 +47,22 @@ export default function Header({ query, setQuery, tema, setTema, onReset, user, 
     document.addEventListener('mousedown', cerrar)
     return () => document.removeEventListener('mousedown', cerrar)
   }, [])
+
+  useEffect(() => {
+    if (!paletaAbierta) return
+    const cerrar = (e) => {
+      if (paletaRef.current && !paletaRef.current.contains(e.target)) setPaletaAbierta(false)
+    }
+    const cerrarEscape = (e) => {
+      if (e.key === 'Escape') setPaletaAbierta(false)
+    }
+    document.addEventListener('mousedown', cerrar)
+    document.addEventListener('keydown', cerrarEscape)
+    return () => {
+      document.removeEventListener('mousedown', cerrar)
+      document.removeEventListener('keydown', cerrarEscape)
+    }
+  }, [paletaAbierta])
 
   return (
     <header className="topbar">
@@ -61,6 +94,44 @@ export default function Header({ query, setQuery, tema, setTema, onReset, user, 
         >
           {tema === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
         </button>
+
+        <div className="acento-menu" ref={paletaRef}>
+          <button
+            className="icon-btn"
+            onClick={() => setPaletaAbierta((v) => !v)}
+            aria-label="Personalizar color"
+            title="Personalizar color"
+            aria-expanded={paletaAbierta}
+          >
+            <Palette size={18} />
+          </button>
+          {paletaAbierta && (
+            <div className="acento-popover">
+              <div className="acento-titulo">
+                <strong>Personalizar</strong>
+                <span>Color de acento</span>
+              </div>
+              <div className="acento-swatches">
+                {ACENTOS.map((a) => (
+                  <button
+                    key={a.id}
+                    className={`acento-swatch${accento === a.id ? ' activo' : ''}`}
+                    onClick={() => {
+                      setAccento(a.id)
+                      setPaletaAbierta(false)
+                    }}
+                    title={a.nombre}
+                    aria-label={a.nombre}
+                  >
+                    <span className="acento-color" style={{ backgroundColor: a.color }}>
+                      {accento === a.id && <Check size={13} strokeWidth={3} />}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         <button
           className="icon-btn danger"
