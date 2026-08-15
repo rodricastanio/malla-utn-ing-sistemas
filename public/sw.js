@@ -1,4 +1,4 @@
-const VERSION = 'malla-utn-v1'
+const VERSION = 'malla-utn-v2'
 const PRECACHE = [
   '/',
   '/index.html',
@@ -34,8 +34,10 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(
       fetch(e.request)
         .then((res) => {
-          const copy = res.clone()
-          caches.open(VERSION).then((c) => c.put(e.request, copy))
+          if (res.ok) {
+            const copy = res.clone()
+            caches.open(VERSION).then((c) => c.put(e.request, copy))
+          }
           return res
         })
         .catch(() => caches.match('/index.html')),
@@ -48,8 +50,10 @@ self.addEventListener('fetch', (e) => {
       (hit) =>
         hit ||
         fetch(e.request).then((res) => {
-          const copy = res.clone()
-          caches.open(VERSION).then((c) => c.put(e.request, copy))
+          if (res.ok) {
+            const copy = res.clone()
+            caches.open(VERSION).then((c) => c.put(e.request, copy))
+          }
           return res
         }),
     ),
