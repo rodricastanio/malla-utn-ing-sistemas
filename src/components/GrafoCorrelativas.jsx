@@ -61,7 +61,6 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
   const layout = useMemo(() => layoutGrafo(plan), [plan])
 
   const viewportRef = useRef(null)
-  const [size, setSize] = useState({ w: 0, h: 0 })
   const [view, setView] = useState({ x: 0, y: 0, k: 0.5 })
   const punteros = useRef(new Map())
   const gesto = useRef(null)
@@ -98,7 +97,6 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
     const w = el.clientWidth
     const h = el.clientHeight
     if (!w || !h) return
-    setSize({ w, h })
     const k = Math.min(1, Math.max(K_MIN, (w - 24) / layout.ancho))
     setView({
       k,
@@ -225,8 +223,7 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
     }
   }
 
-  const k = view.k
-  const viewBox = `${view.x} ${view.y} ${size.w / k} ${size.h / k}`
+  const worldTransform = `translate(${view.x}, ${view.y}) scale(${view.k})`
 
   return (
     <section className="grafo">
@@ -273,24 +270,24 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
       </div>
 
       <div className="grafo-viewport" ref={viewportRef}>
-        {size.w > 0 && (
-          <svg
-            className="grafo-svg"
-            viewBox={viewBox}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerEnd}
-            onPointerCancel={onPointerEnd}
-          >
-            <defs>
-              <marker id="flecha-cursar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-                <path d="M 0 1 L 9 5 L 0 9 z" />
-              </marker>
-              <marker id="flecha-aprobar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-                <path d="M 0 1 L 9 5 L 0 9 z" />
-              </marker>
-            </defs>
+        <svg
+          className="grafo-svg"
+          viewBox={`0 0 ${layout.ancho} ${layout.alto}`}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerEnd}
+          onPointerCancel={onPointerEnd}
+        >
+          <defs>
+            <marker id="flecha-cursar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" />
+            </marker>
+            <marker id="flecha-aprobar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" />
+            </marker>
+          </defs>
 
+          <g transform={worldTransform}>
             <g>
               {grafo.aristas.map((e, i) => {
                 const a = layout.posiciones[e.from.key]
@@ -376,8 +373,8 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
                 )
               })}
             </g>
-          </svg>
-        )}
+          </g>
+        </svg>
       </div>
     </section>
   )
