@@ -3319,19 +3319,25 @@ body::before {
     overflow-x: visible;
   }
 
+  .nav-rail-inner {
+    display: block;
+    width: 100%;
+  }
+
   .nav-rail .segmented {
     display: flex;
     gap: 0;
     padding: 0;
     border-radius: 0;
     background: transparent;
+    width: 100%;
   }
 
   .nav-rail .segmented button {
     flex: 1;
     flex-direction: column;
     gap: 0.3rem;
-    padding: 0.55rem 0.25rem 0.45rem;
+    padding: 0.6rem 0.25rem 0.5rem;
     border-radius: 14px;
     font-size: 0.7rem;
     font-weight: 600;
