@@ -112,7 +112,7 @@ export default function App() {
                   onClick={() => setVista(tab.id)}
                   aria-current={vista === tab.id ? 'page' : undefined}
                 >
-                  <tab.icono size={15} />
+                  <tab.icono size={16} />
                   <span>{tab.etiqueta}</span>
                 </button>
               ))}

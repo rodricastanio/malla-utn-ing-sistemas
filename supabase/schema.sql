@@ -46,3 +46,8 @@ create policy "borrado propio" on public.recordatorios
   for delete using (auth.uid() = perfil_id);
 
 create index if not exists recordatorios_fecha_idx on public.recordatorios (perfil_id, fecha);
+
+-- Acento del tema personalizado (se sincroniza entre dispositivos)
+-- Pegar en Supabase → SQL Editor → Run
+alter table public.perfiles
+  add column if not exists accento text;

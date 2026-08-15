@@ -62,6 +62,8 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
 
   const viewportRef = useRef(null)
   const [view, setView] = useState({ x: 0, y: 0, k: 0.5 })
+  const viewRef = useRef(view)
+  const mundoRef = useRef(null)
   const punteros = useRef(new Map())
   const gesto = useRef(null)
   const movidoRef = useRef(false)
@@ -70,6 +72,17 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
 
   const K_MIN = 0.3
   const K_MAX = 3.2
+
+  useEffect(() => {
+    viewRef.current = view
+  }, [view])
+
+  const escribirTransform = useCallback(() => {
+    const g = mundoRef.current
+    if (!g) return
+    const v = viewRef.current
+    g.setAttribute('transform', `translate(${v.x}, ${v.y}) scale(${v.k})`)
+  }, [])
 
   const matching = useMemo(() => {
     if (!query) return null
@@ -174,7 +187,12 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
       const dx = e.clientX - gesto.current.x
       const dy = e.clientY - gesto.current.y
       if (Math.abs(dx) + Math.abs(dy) > 4) movidoRef.current = true
-      setView((v) => ({ ...v, x: gesto.current.vx + dx, y: gesto.current.vy + dy }))
+      viewRef.current = {
+        ...viewRef.current,
+        x: gesto.current.vx + dx,
+        y: gesto.current.vy + dy,
+      }
+      escribirTransform()
     } else if (punteros.current.size === 2) {
       const [a, b] = [...punteros.current.values()]
       const dist = Math.hypot(a.x - b.x, a.y - b.y)
@@ -186,7 +204,8 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
         const k = Math.min(K_MAX, Math.max(K_MIN, g.k0 * (dist / g.dist0)))
         const cx = g.vx + g.mx0 / g.k0
         const cy = g.vy + g.my0 / g.k0
-        setView({ k, x: cx - mx / k, y: cy - my / k })
+        viewRef.current = { k, x: cx - mx / k, y: cy - my / k }
+        escribirTransform()
       }
     }
   }
@@ -197,10 +216,15 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
     if (punteros.current.size < 2) {
       const resto = [...punteros.current.values()][0]
       gesto.current = resto
-        ? { tipo: 'pan', x: resto.x, y: resto.y, vx: view.x, vy: view.y }
+        ? { tipo: 'pan', x: resto.x, y: resto.y, vx: viewRef.current.x, vy: viewRef.current.y }
         : null
     }
-    if (!eraUltimo || movidoRef.current || punteros.current.size > 0) return
+    if (punteros.current.size === 0 && movidoRef.current) {
+      setView(viewRef.current)
+      movidoRef.current = false
+      return
+    }
+    if (!eraUltimo || punteros.current.size > 0) return
     const rect = e.currentTarget.getBoundingClientRect()
     const t = document.elementFromPoint(e.clientX, e.clientY)?.closest('.grafo-nodo')
     if (t) {
@@ -287,7 +311,7 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
             </marker>
           </defs>
 
-          <g transform={worldTransform}>
+          <g ref={mundoRef} transform={worldTransform}>
             <g>
               {grafo.aristas.map((e, i) => {
                 const a = layout.posiciones[e.from.key]
@@ -335,8 +359,12 @@ export default function GrafoCorrelativas({ plan, efectivos, alcanzables, query,
                       .filter(Boolean)
                       .join(' ')}
                     transform={`translate(${pos.x}, ${pos.y})`}
-                    onMouseEnter={() => setHover(nodo.key)}
-                    onMouseLeave={() => setHover(null)}
+                    onMouseEnter={() => {
+                      if (punteros.current.size === 0) setHover(nodo.key)
+                    }}
+                    onMouseLeave={() => {
+                      if (punteros.current.size === 0) setHover(null)
+                    }}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {

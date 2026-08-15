@@ -76,6 +76,8 @@ export function usePlan(user, esInvitado = false) {
   const notasRef = useRef(notas)
   notasRef.current = notas
   const sincronizando = useRef(false)
+  const cargadoRef = useRef(false)
+  const accentoRef = useRef(accento)
   const esInvitadoRef = useRef(esInvitado)
 
   useEffect(() => {
@@ -111,9 +113,12 @@ export function usePlan(user, esInvitado = false) {
     } catch {
       /* ignorar */
     }
-  }, [accento])
+    if (cargadoRef.current && user && supabase) {
+      empujar(intentosRef.current, notasRef.current, accento)
+    }
+  }, [accento, user, empujar])
 
-  const empujar = useCallback(async (nuevosIntentos, nuevasNotas) => {
+  const empujar = useCallback(async (nuevosIntentos, nuevasNotas, nuevoAcento) => {
     const u = userRef.current
     if (!u || !supabase) return
     await supabase
@@ -123,6 +128,7 @@ export function usePlan(user, esInvitado = false) {
           id: u.id,
           intentos: nuevosIntentos ?? {},
           notas: nuevasNotas ?? {},
+          accento: nuevoAcento ?? accentoRef.current ?? null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'id' }
@@ -133,6 +139,7 @@ export function usePlan(user, esInvitado = false) {
     if (!user || !supabase) return undefined
     let activo = true
     sincronizando.current = true
+    cargadoRef.current = false
     ;(async () => {
       const { data, error } = await supabase
         .from('perfiles')
@@ -141,6 +148,7 @@ export function usePlan(user, esInvitado = false) {
         .maybeSingle()
       if (!activo) return
       sincronizando.current = false
+      cargadoRef.current = true
       if (error) return
       const localInt = intentosRef.current
       const localNot = notasRef.current
@@ -149,9 +157,13 @@ export function usePlan(user, esInvitado = false) {
         const mergeNot = { ...localNot, ...(data.notas ?? {}) }
         setIntentos(mergeInt)
         setNotas(mergeNot)
-        empujar(mergeInt, mergeNot)
+        if (data.accento) {
+          accentoRef.current = data.accento
+          setAccento(data.accento)
+        }
+        empujar(mergeInt, mergeNot, accentoRef.current)
       } else {
-        empujar(localInt, localNot)
+        empujar(localInt, localNot, accentoRef.current)
       }
     })()
     return () => {
