@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays, Search, X } from 'lucide-react'
 import { usePlan } from './hooks/usePlan'
 import { useAuth } from './hooks/useAuth'
@@ -53,6 +53,115 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null)
   const [vista, setVista] = useState('inicio')
+
+  const contenidoRef = useRef(null)
+  const indiceActualRef = useRef(0)
+  indiceActualRef.current = TABS.findIndex((t) => t.id === vista)
+
+  const navegarA = (id) => {
+    const nuevoI = TABS.findIndex((t) => t.id === id)
+    const viejoI = indiceActualRef.current
+    if (nuevoI === viejoI) return
+    const el = contenidoRef.current
+    if (!el) {
+      setVista(id)
+      return
+    }
+    const dir = nuevoI > viejoI ? 1 : -1
+    const ancho = el.offsetWidth || 320
+    el.style.transition = 'transform 180ms ease'
+    el.style.transform = `translateX(${-dir * ancho}px)`
+    setTimeout(() => {
+      setVista(TABS[nuevoI].id)
+      el.style.transition = 'none'
+      el.style.transform = `translateX(${dir * ancho}px)`
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
+          el.style.transform = 'translateX(0)'
+        })
+      )
+    }, 180)
+  }
+
+  useEffect(() => {
+    const el = contenidoRef.current
+    if (!el) return
+    const gesto = { activo: false, x: 0, y: 0, bloqueado: false, intent: false }
+
+    const onStart = (e) => {
+      if (e.touches.length !== 1) return
+      if (e.target.closest('.cal-swipe')) return
+      gesto.activo = true
+      gesto.bloqueado = false
+      gesto.intent = false
+      gesto.x = e.touches[0].clientX
+      gesto.y = e.touches[0].clientY
+      el.style.transition = 'none'
+    }
+
+    const onMove = (e) => {
+      if (!gesto.activo || gesto.bloqueado) return
+      const dx = e.touches[0].clientX - gesto.x
+      const dy = e.touches[0].clientY - gesto.y
+      if (!gesto.intent) {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return
+        if (Math.abs(dy) > Math.abs(dx)) {
+          gesto.bloqueado = true
+          return
+        }
+        gesto.intent = true
+      }
+      e.preventDefault()
+      const umbral = 80
+      const d = Math.abs(dx) > umbral ? Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35) : dx
+      el.style.transform = `translateX(${d}px)`
+    }
+
+    const onEnd = () => {
+      if (!gesto.activo || gesto.bloqueado) return
+      gesto.activo = false
+      const dx = parseFloat(el.style.transform.match(/-?\d+(\.\d+)?/)?.[0] ?? 0)
+      const ancho = el.offsetWidth || 320
+      const viejoI = indiceActualRef.current
+      if (Math.abs(dx) > 60) {
+        const dir = Math.sign(dx)
+        const objetivo = viejoI + (dir > 0 ? -1 : 1)
+        if (objetivo < 0 || objetivo >= TABS.length) {
+          el.style.transition = 'transform 220ms cubic-bezier(0.32, 0.72, 0, 1)'
+          el.style.transform = 'translateX(0)'
+          return
+        }
+        el.style.transition = 'transform 210ms cubic-bezier(0.32, 0.72, 0, 1)'
+        el.style.transform = `translateX(${dir * ancho}px)`
+        setTimeout(() => {
+          setVista(TABS[objetivo].id)
+          el.style.transition = 'none'
+          el.style.transform = `translateX(${-dir * ancho}px)`
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
+              el.style.transform = 'translateX(0)'
+            })
+          )
+        }, 200)
+      } else {
+        el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
+        el.style.transform = 'translateX(0)'
+      }
+    }
+
+    el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchmove', onMove, { passive: false })
+    el.addEventListener('touchend', onEnd, { passive: true })
+    el.addEventListener('touchcancel', onEnd, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchmove', onMove)
+      el.removeEventListener('touchend', onEnd)
+      el.removeEventListener('touchcancel', onEnd)
+    }
+  }, [])
 
   const nombrePorId = useMemo(() => {
     const mapa = new Map()
@@ -109,7 +218,7 @@ export default function App() {
                 <button
                   key={tab.id}
                   className={vista === tab.id ? 'activo' : ''}
-                  onClick={() => setVista(tab.id)}
+                  onClick={() => navegarA(tab.id)}
                   aria-current={vista === tab.id ? 'page' : undefined}
                 >
                   <tab.icono size={22} />
@@ -121,6 +230,7 @@ export default function App() {
         </nav>
       </div>
 
+      <div className="vista-swipe" ref={contenidoRef}>
       {vista === 'inicio' && (
         <Home
           plan={plan}
@@ -128,7 +238,7 @@ export default function App() {
           alcanzables={alcanzables}
           notas={notas}
           onAbrir={abrirModal}
-          irA={setVista}
+          irA={navegarA}
         />
       )}
 
@@ -224,6 +334,7 @@ export default function App() {
           eliminar={eliminarRecordatorio}
         />
       )}
+      </div>
 
       <footer className="footer">
         <p>

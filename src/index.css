@@ -1511,6 +1511,11 @@ body::before {
   overscroll-behavior: none;
 }
 
+.vista-swipe {
+  touch-action: pan-y;
+  will-change: transform;
+}
+
 .cal-card-head {
   display: flex;
   align-items: center;
