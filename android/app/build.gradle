@@ -37,6 +37,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (keystorePath) {
                 signingConfig signingConfigs.release
+            } else {
+                // Sin keystore de producción configurado, firmamos con la debug
+                // key para que el APK siempre sea instalable. Las actualizaciones
+                // llegan por Capgo (web), no requieren re-firmar nada.
+                signingConfig signingConfigs.debug
             }
         }
     }

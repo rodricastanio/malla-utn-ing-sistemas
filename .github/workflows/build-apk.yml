@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -69,6 +69,23 @@ jobs:
         env:
           VERSION_CODE: ${{ github.run_number }}
           VERSION_NAME: ${{ format('1.0.{0}', github.run_number) }}
+
+      - name: Publicar APK en GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Plan Ing. Sistemas — APK instalable
+          body: |
+            APK firmado (release). Instalalo una vez; después las actualizaciones llegan solas por Capgo Live Update.
+
+            - Versión: 1.0.${{ github.run_number }}
+            - Commit: ${{ github.sha }}
+          files: |
+            android/app/build/outputs/apk/release/app-release.apk
+          replace_existing: true
+          update_latest_release: true
+          fail_on_unmatched_files: true
 
       - uses: actions/upload-artifact@v5
         with:
