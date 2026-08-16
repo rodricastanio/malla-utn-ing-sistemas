@@ -187,7 +187,7 @@ button,
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 html,
@@ -204,8 +204,7 @@ body {
     'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
+  overflow-x: clip;
   transition: background-color 0.4s var(--suave), color 0.4s var(--suave);
 }
 
@@ -1514,26 +1513,8 @@ body::before {
   overscroll-behavior: none;
 }
 
-.vista-swipe {
-  touch-action: pan-y;
-  position: relative;
-  overflow-x: clip;
-  overscroll-behavior-x: none;
-}
-
-.vista-track {
-  display: flex;
-  width: 100%;
-}
-
 .vista-suspense {
   min-height: 60vh;
-}
-
-.vista-pagina {
-  flex: 0 0 100%;
-  width: 100%;
-  min-width: 100%;
 }
 
 .cal-card-head {
