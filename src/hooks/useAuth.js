@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { Browser } from '@capacitor/browser'
+import { App } from '@capacitor/app'
 
 const INVITADO_KEY = 'malla-utn-invitado'
+const OAUTH_CALLBACK = 'com.rodricastanio.mallautn://oauth/callback'
+
+function esNativo() {
+  return typeof window !== 'undefined' && !!window.Capacitor?.isNativePlatform?.()
+}
 
 function leerInvitado() {
   try {
@@ -44,6 +51,24 @@ export function useAuth() {
     return () => sub.subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (!esNativo() || !supabase) return undefined
+    let escucha
+    App.addListener('appUrlOpen', (e) => {
+      if (!e.url?.startsWith('com.rodricastanio.mallautn://')) return
+      const urlObj = new URL(e.url)
+      const code = urlObj.searchParams.get('code')
+      if (code) {
+        supabase.auth.exchangeCodeForSession(code).catch((err) => console.error(err))
+      }
+    }).then((handle) => {
+      escucha = handle
+    })
+    return () => {
+      escucha?.remove()
+    }
+  }, [])
+
   const entrarComoInvitado = () => {
     setEsInvitado(true)
     guardarInvitado(true)
@@ -51,11 +76,19 @@ export function useAuth() {
 
   const signInGoogle = async () => {
     if (!supabase) return new Error('Supabase no está configurado')
-    const { error } = await supabase.auth.signInWithOAuth({
+    const nativo = esNativo()
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      options: {
+        redirectTo: nativo ? OAUTH_CALLBACK : window.location.origin,
+        skipBrowserRedirect: nativo,
+      },
     })
-    return error
+    if (error) return error
+    if (nativo && data?.url) {
+      await Browser.open({ url: data.url })
+    }
+    return null
   }
 
   const signInEmail = async (email, password) => {

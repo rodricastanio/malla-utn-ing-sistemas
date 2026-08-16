@@ -82,6 +82,9 @@ out
 .nuxt
 dist
 
+# Capacitor: assets web copiados (se regeneran con `cap sync`)
+android/app/src/main/assets/public
+
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js

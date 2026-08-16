@@ -9,7 +9,8 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-if ('serviceWorker' in navigator) {
+// Dentro de Capacitor (APK) los assets van embebidos: no hace falta service worker.
+if ('serviceWorker' in navigator && !window.Capacitor?.isNativePlatform()) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {})
   })

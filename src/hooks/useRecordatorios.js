@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { alCambiarConexion, marcarPendiente, limpiarPendiente } from '../lib/sync'
 
 const STORAGE_KEY = 'malla-utn-recordatorios-v2'
 const SUFIXO_INVITADO = '-invitado'
@@ -24,6 +25,7 @@ function cargar(esInvitado) {
 
 export function useRecordatorios(user, esInvitado = false) {
   const [lista, setLista] = useState(() => cargar(esInvitado))
+  const [reintento, setReintento] = useState(0)
 
   const userRef = useRef(user)
   userRef.current = user
@@ -53,24 +55,40 @@ export function useRecordatorios(user, esInvitado = false) {
   const empujar = useCallback(async (items) => {
     const u = userRef.current
     if (!u || !supabase) return
-    const rows = items.map((r) => ({
-      id: r.id,
-      perfil_id: u.id,
-      titulo: r.titulo,
-      materia_id: r.materia_id || null,
-      tipo: r.tipo || 'otro',
-      fecha: r.fecha,
-      descripcion: r.descripcion || '',
-    }))
-    if (rows.length) {
-      const { error } = await supabase.from('recordatorios').upsert(rows, { onConflict: 'id' })
-      if (error) return
-    }
-    const ids = rows.map((r) => r.id)
-    if (ids.length) {
-      await supabase.from('recordatorios').delete().not('id', 'in', ids)
-    } else {
-      await supabase.from('recordatorios').delete().eq('perfil_id', u.id)
+    try {
+      const rows = items.map((r) => ({
+        id: r.id,
+        perfil_id: u.id,
+        titulo: r.titulo,
+        materia_id: r.materia_id || null,
+        tipo: r.tipo || 'otro',
+        fecha: r.fecha,
+        descripcion: r.descripcion || '',
+      }))
+      if (rows.length) {
+        const { error } = await supabase.from('recordatorios').upsert(rows, { onConflict: 'id' })
+        if (error) {
+          marcarPendiente()
+          return
+        }
+      }
+      const ids = rows.map((r) => r.id)
+      if (ids.length) {
+        const { error } = await supabase.from('recordatorios').delete().not('id', 'in', ids)
+        if (error) {
+          marcarPendiente()
+          return
+        }
+      } else {
+        const { error } = await supabase.from('recordatorios').delete().eq('perfil_id', u.id)
+        if (error) {
+          marcarPendiente()
+          return
+        }
+      }
+      limpiarPendiente()
+    } catch {
+      marcarPendiente()
     }
   }, [])
 
@@ -78,19 +96,36 @@ export function useRecordatorios(user, esInvitado = false) {
     if (!user || !supabase) return undefined
     let activo = true
     ;(async () => {
-      const { data, error } = await supabase.from('recordatorios').select('*')
-      if (!activo) return
-      if (error) return
-      sincronizando.current = true
-      const porId = new Map((data ?? []).map((r) => [r.id, r]))
-      listaRef.current.forEach((r) => porId.set(r.id, r))
-      setLista(ordenar([...porId.values()]))
-      sincronizando.current = false
+      try {
+        const { data, error } = await supabase.from('recordatorios').select('*')
+        if (!activo) return
+        if (error) {
+          marcarPendiente()
+          return
+        }
+        limpiarPendiente()
+        sincronizando.current = true
+        const porId = new Map((data ?? []).map((r) => [r.id, r]))
+        listaRef.current.forEach((r) => porId.set(r.id, r))
+        setLista(ordenar([...porId.values()]))
+      } catch {
+        marcarPendiente()
+      } finally {
+        if (activo) sincronizando.current = false
+      }
     })()
     return () => {
       activo = false
     }
-  }, [user])
+  }, [user, reintento])
+
+  useEffect(
+    () =>
+      alCambiarConexion((conectado) => {
+        if (conectado && userRef.current && supabase) setReintento((n) => n + 1)
+      }),
+    []
+  )
 
   useEffect(() => {
     const timer = setTimeout(() => {

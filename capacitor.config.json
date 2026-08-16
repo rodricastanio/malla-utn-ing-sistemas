@@ -1,0 +1,22 @@
+{
+  "appId": "com.rodricastanio.mallautn",
+  "appName": "Plan Ing. Sistemas",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 500,
+      "backgroundColor": "#f2f2f7",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "LIGHT",
+      "backgroundColor": "#f2f2f7"
+    }
+  }
+}

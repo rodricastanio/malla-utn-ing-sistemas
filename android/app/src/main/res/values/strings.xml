@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Plan Ing. Sistemas</string>
+    <string name="title_activity_main">Plan Ing. Sistemas</string>
+    <string name="package_name">com.rodricastanio.mallautn</string>
+    <string name="custom_url_scheme">com.rodricastanio.mallautn</string>
+</resources>

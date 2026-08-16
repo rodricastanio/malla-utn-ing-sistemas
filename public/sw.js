@@ -10,10 +10,20 @@ const PRECACHE = [
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches
-      .open(VERSION)
-      .then((c) => c.addAll(PRECACHE))
-      .then(() => self.skipWaiting()),
+    (async () => {
+      const cache = await caches.open(VERSION)
+      await cache.addAll(PRECACHE)
+      try {
+        const res = await fetch('/sw-precache.json')
+        if (res.ok) {
+          const { assets = [] } = await res.json()
+          if (assets.length) await cache.addAll(assets)
+        }
+      } catch {
+        // primera instalación sin red: los assets ya quedaron cacheados antes
+      }
+      await self.skipWaiting()
+    })()
   )
 })
 

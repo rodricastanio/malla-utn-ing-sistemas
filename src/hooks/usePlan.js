@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import plan from '../data/plan.json'
 import { calcularEstados } from '../lib/plan'
 import { supabase } from '../lib/supabase'
+import { alCambiarConexion, marcarPendiente, limpiarPendiente } from '../lib/sync'
 
 const STORAGE_KEY = 'malla-utn-intentos-v2'
 const NOTAS_KEY = 'malla-utn-notas-v2'
@@ -68,6 +69,7 @@ export function usePlan(user, esInvitado = false) {
   const [notas, setNotas] = useState(() => cargar(NOTAS_KEY, esInvitado))
   const [tema, setTema] = useState(cargarTema)
   const [accento, setAccento] = useState(cargarAcento)
+  const [reintento, setReintento] = useState(0)
 
   const userRef = useRef(user)
   userRef.current = user
@@ -83,18 +85,27 @@ export function usePlan(user, esInvitado = false) {
   const empujar = useCallback(async (nuevosIntentos, nuevasNotas, nuevoAcento) => {
     const u = userRef.current
     if (!u || !supabase) return
-    await supabase
-      .from('perfiles')
-      .upsert(
-        {
-          id: u.id,
-          intentos: nuevosIntentos ?? {},
-          notas: nuevasNotas ?? {},
-          accento: nuevoAcento ?? accentoRef.current ?? null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'id' }
-      )
+    try {
+      const { error } = await supabase
+        .from('perfiles')
+        .upsert(
+          {
+            id: u.id,
+            intentos: nuevosIntentos ?? {},
+            notas: nuevasNotas ?? {},
+            accento: nuevoAcento ?? accentoRef.current ?? null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'id' }
+        )
+      if (error) {
+        marcarPendiente()
+        return
+      }
+      limpiarPendiente()
+    } catch {
+      marcarPendiente()
+    }
   }, [])
 
   useEffect(() => {
@@ -141,35 +152,54 @@ export function usePlan(user, esInvitado = false) {
     sincronizando.current = true
     cargadoRef.current = false
     ;(async () => {
-      const { data, error } = await supabase
-        .from('perfiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle()
-      if (!activo) return
-      sincronizando.current = false
-      cargadoRef.current = true
-      if (error) return
-      const localInt = intentosRef.current
-      const localNot = notasRef.current
-      if (data) {
-        const mergeInt = { ...localInt, ...(data.intentos ?? {}) }
-        const mergeNot = { ...localNot, ...(data.notas ?? {}) }
-        setIntentos(mergeInt)
-        setNotas(mergeNot)
-        if (data.accento) {
-          accentoRef.current = data.accento
-          setAccento(data.accento)
+      try {
+        const { data, error } = await supabase
+          .from('perfiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle()
+        if (!activo) return
+        if (error) {
+          marcarPendiente()
+          return
         }
-        empujar(mergeInt, mergeNot, accentoRef.current)
-      } else {
-        empujar(localInt, localNot, accentoRef.current)
+        limpiarPendiente()
+        const localInt = intentosRef.current
+        const localNot = notasRef.current
+        if (data) {
+          const mergeInt = { ...localInt, ...(data.intentos ?? {}) }
+          const mergeNot = { ...localNot, ...(data.notas ?? {}) }
+          setIntentos(mergeInt)
+          setNotas(mergeNot)
+          if (data.accento) {
+            accentoRef.current = data.accento
+            setAccento(data.accento)
+          }
+          empujar(mergeInt, mergeNot, accentoRef.current)
+        } else {
+          empujar(localInt, localNot, accentoRef.current)
+        }
+      } catch {
+        marcarPendiente()
+      } finally {
+        if (activo) {
+          sincronizando.current = false
+          cargadoRef.current = true
+        }
       }
     })()
     return () => {
       activo = false
     }
-  }, [user, empujar])
+  }, [user, empujar, reintento])
+
+  useEffect(
+    () =>
+      alCambiarConexion((conectado) => {
+        if (conectado && userRef.current && supabase) setReintento((n) => n + 1)
+      }),
+    []
+  )
 
   useEffect(() => {
     const timer = setTimeout(() => {

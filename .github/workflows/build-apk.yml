@@ -1,0 +1,68 @@
+name: build-apk
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Escribir variables de entorno
+        run: |
+          printf "VITE_SUPABASE_URL=%s\n" "$VITE_SUPABASE_URL" > .env
+          printf "VITE_SUPABASE_ANON_KEY=%s\n" "$VITE_SUPABASE_ANON_KEY" >> .env
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build web
+        run: npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Keystore (firma release)
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            mkdir -p keystore
+            echo "$KEYSTORE_BASE64" | base64 --decode > keystore/mallautn.keystore
+            echo "KEYSTORE_PATH=keystore/mallautn.keystore" >> "$GITHUB_ENV"
+          else
+            echo "Sin secrets de firma: el APK release quedará sin firmar."
+          fi
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: Build APKs (debug + release)
+        working-directory: android
+        run: ./gradlew assembleDebug assembleRelease
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk-android
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
