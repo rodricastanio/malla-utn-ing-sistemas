@@ -83,8 +83,8 @@ jobs:
             - Commit: ${{ github.sha }}
           files: |
             android/app/build/outputs/apk/release/app-release.apk
-          replace_existing: true
-          update_latest_release: true
+          overwrite_files: true
+          make_latest: true
           fail_on_unmatched_files: true
 
       - uses: actions/upload-artifact@v5
