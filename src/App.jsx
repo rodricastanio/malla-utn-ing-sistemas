@@ -34,6 +34,7 @@ const restablecerTrack = (vp, track) => {
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
       track.style.transition = TRANSICION_TRACK
+      track.style.willChange = ''
     })
   )
 }
@@ -86,7 +87,7 @@ export default function App() {
 
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
-  const gesto = useRef({ activo: false, x: 0, y: 0, bloqueado: false, intent: false, dx: 0 })
+  const gesto = useRef({ activo: false, x: 0, y: 0, bloqueado: false, intent: false, dx: 0, vw: 0 })
   const indiceActualRef = useRef(0)
   indiceActualRef.current = TABS.findIndex((t) => t.id === vista)
 
@@ -95,24 +96,35 @@ export default function App() {
     const viejoI = indiceActualRef.current
     if (nuevoI === viejoI) return
     const track = trackRef.current
-    if (!track) {
+    const vp = viewportRef.current
+    if (!track || !vp) {
       setVista(id)
       return
     }
-    const vw = anchoVista(viewportRef.current)
+    const vw = anchoVista(vp)
     const lado = nuevoI > viejoI ? 1 : -1
-    setVecino({ id, lado })
-    track.style.transition = 'none'
-    track.style.transform = transformarTrack(vw, 0)
+    const ponerEn = (dx, suave) => {
+      track.style.transition = suave ? TRANSICION_TRACK : 'none'
+      track.style.transform = transformarTrack(vw, dx)
+    }
+    track.style.willChange = 'transform'
+    ponerEn(0, false)
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
-        animarTrack(track, vw, -lado * vw)
+        ponerEn(-lado * vw, true)
       })
     )
     setTimeout(() => {
       setVista(id)
-      setVecino(null)
-      restablecerTrack(viewportRef.current, trackRef.current)
+      ponerEn(lado * vw, false)
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          ponerEn(0, true)
+        })
+      )
+      setTimeout(() => {
+        track.style.willChange = ''
+      }, 320)
     }, 280)
   }
 
@@ -133,8 +145,10 @@ export default function App() {
       g.bloqueado = false
       g.intent = false
       g.dx = 0
+      g.vw = anchoVista(vp)
       g.x = e.touches[0].clientX
       g.y = e.touches[0].clientY
+      track.style.willChange = 'transform'
     }
 
     const onMove = (e) => {
@@ -158,21 +172,24 @@ export default function App() {
       const umbral = 80
       const d = Math.abs(dx) > umbral ? Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35) : dx
       g.dx = d
-      track.style.transform = transformarTrack(anchoVista(vp), d)
+      track.style.transform = transformarTrack(g.vw, d)
     }
 
     const onEnd = () => {
       if (!g.activo || g.bloqueado) return
       g.activo = false
       const dx = g.dx
-      const vw = anchoVista(vp)
+      const vw = g.vw
       const viejoI = indiceActualRef.current
       if (Math.abs(dx) > 60) {
         const lado = dx > 0 ? -1 : 1
         const objetivo = viejoI + lado
         if (objetivo < 0 || objetivo >= TABS.length) {
           animarTrack(track, vw, 0)
-          setTimeout(() => setVecino(null), 280)
+          setTimeout(() => {
+            setVecino(null)
+            track.style.willChange = ''
+          }, 280)
           return
         }
         const nuevoId = TABS[objetivo].id
@@ -184,7 +201,10 @@ export default function App() {
         }, 280)
       } else {
         animarTrack(track, vw, 0)
-        setTimeout(() => setVecino(null), 280)
+        setTimeout(() => {
+          setVecino(null)
+          track.style.willChange = ''
+        }, 280)
       }
     }
 
