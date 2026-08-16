@@ -2559,6 +2559,17 @@ body::before {
   margin: 0;
 }
 
+.footer-version {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  border: 1px solid var(--separador);
+}
+
 /* ── Modal ───────────────────────────────────────────── */
 .overlay {
   position: fixed;

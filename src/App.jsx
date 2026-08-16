@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays, Search, X } from 'lucide-react'
+import { CapacitorUpdater } from '@capgo/capacitor-updater'
 import { usePlan } from './hooks/usePlan'
 import { useAuth } from './hooks/useAuth'
 import { useRecordatorios } from './hooks/useRecordatorios'
@@ -53,6 +54,15 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null)
   const [vista, setVista] = useState('inicio')
+  const [version, setVersion] = useState(null)
+
+  useEffect(() => {
+    if (window.Capacitor?.isNativePlatform()) {
+      CapacitorUpdater.getCurrent()
+        .then((res) => setVersion(res.current))
+        .catch(() => {})
+    }
+  }, [])
 
   const contenidoRef = useRef(null)
   const indiceActualRef = useRef(0)
@@ -341,6 +351,7 @@ export default function App() {
           Seguimiento de plan de estudios — Ingeniería en Sistemas de Información. Tu progreso se
           guarda en tu cuenta y se sincroniza entre tus dispositivos.
         </p>
+        {version && <span className="footer-version">v{version}</span>}
       </footer>
 
       {modal && (

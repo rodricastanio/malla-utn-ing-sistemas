@@ -20,7 +20,8 @@
     },
     "CapacitorUpdater": {
       "autoUpdate": "onLaunch",
-      "defaultChannel": "production"
+      "defaultChannel": "production",
+      "appId": "com.rodricastanio.mallautn"
     }
   }
 }
