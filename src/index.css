@@ -186,6 +186,10 @@ button,
   touch-action: manipulation;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 html,
 body {
   margin: 0;
@@ -1513,7 +1517,22 @@ body::before {
 
 .vista-swipe {
   touch-action: pan-y;
+  overflow: hidden;
+  position: relative;
+  overscroll-behavior-x: none;
+}
+
+.vista-track {
+  display: flex;
+  width: 100%;
   will-change: transform;
+}
+
+.vista-pagina {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  background: var(--fondo);
 }
 
 .cal-card-head {

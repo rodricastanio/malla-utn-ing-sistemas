@@ -19,6 +19,25 @@ import './index.css'
 
 const HORAS_REQUERIDAS = { 3: 4, 4: 6, 5: 10 }
 
+const TRANSICION_TRACK = 'transform 260ms cubic-bezier(0.32, 0.72, 0, 1)'
+const anchoVista = (vp) => vp?.offsetWidth || window.innerWidth || 320
+const transformarTrack = (vw, dx) => `translateX(${-vw + dx}px)`
+const animarTrack = (track, vw, dx) => {
+  if (!track) return
+  track.style.transition = TRANSICION_TRACK
+  track.style.transform = transformarTrack(vw, dx)
+}
+const restablecerTrack = (vp, track) => {
+  if (!track) return
+  track.style.transition = 'none'
+  track.style.transform = transformarTrack(anchoVista(vp), 0)
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      track.style.transition = TRANSICION_TRACK
+    })
+  )
+}
+
 const TABS = [
   { id: 'inicio', etiqueta: 'Inicio', icono: HomeIcon },
   { id: 'malla', etiqueta: 'Malla', icono: LayoutGrid },
@@ -55,6 +74,7 @@ export default function App() {
   const [modal, setModal] = useState(null)
   const [vista, setVista] = useState('inicio')
   const [version, setVersion] = useState(null)
+  const [vecino, setVecino] = useState(null)
 
   useEffect(() => {
     if (window.Capacitor?.isNativePlatform()) {
@@ -64,7 +84,9 @@ export default function App() {
     }
   }, [])
 
-  const contenidoRef = useRef(null)
+  const viewportRef = useRef(null)
+  const trackRef = useRef(null)
+  const gesto = useRef({ activo: false, x: 0, y: 0, bloqueado: false, intent: false, dx: 0 })
   const indiceActualRef = useRef(0)
   indiceActualRef.current = TABS.findIndex((t) => t.id === vista)
 
@@ -72,104 +94,111 @@ export default function App() {
     const nuevoI = TABS.findIndex((t) => t.id === id)
     const viejoI = indiceActualRef.current
     if (nuevoI === viejoI) return
-    const el = contenidoRef.current
-    if (!el) {
+    const track = trackRef.current
+    if (!track) {
       setVista(id)
       return
     }
-    const dir = nuevoI > viejoI ? 1 : -1
-    const ancho = el.offsetWidth || 320
-    el.style.transition = 'transform 180ms ease'
-    el.style.transform = `translateX(${-dir * ancho}px)`
+    const vw = anchoVista(viewportRef.current)
+    const lado = nuevoI > viejoI ? 1 : -1
+    setVecino({ id, lado })
+    track.style.transition = 'none'
+    track.style.transform = transformarTrack(vw, 0)
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        animarTrack(track, vw, -lado * vw)
+      })
+    )
     setTimeout(() => {
-      setVista(TABS[nuevoI].id)
-      el.style.transition = 'none'
-      el.style.transform = `translateX(${dir * ancho}px)`
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
-          el.style.transform = 'translateX(0)'
-        })
-      )
-    }, 180)
+      setVista(id)
+      setVecino(null)
+      restablecerTrack(viewportRef.current, trackRef.current)
+    }, 280)
   }
 
   useEffect(() => {
-    const el = contenidoRef.current
-    if (!el) return
-    const gesto = { activo: false, x: 0, y: 0, bloqueado: false, intent: false }
+    const vp = viewportRef.current
+    const track = trackRef.current
+    if (!vp || !track) return
+    const g = gesto.current
+
+    track.style.transition = 'none'
+    track.style.transform = transformarTrack(anchoVista(vp), 0)
+    const onResize = () => restablecerTrack(vp, track)
 
     const onStart = (e) => {
       if (e.touches.length !== 1) return
       if (e.target.closest('.cal-swipe')) return
-      gesto.activo = true
-      gesto.bloqueado = false
-      gesto.intent = false
-      gesto.x = e.touches[0].clientX
-      gesto.y = e.touches[0].clientY
-      el.style.transition = 'none'
+      g.activo = true
+      g.bloqueado = false
+      g.intent = false
+      g.dx = 0
+      g.x = e.touches[0].clientX
+      g.y = e.touches[0].clientY
     }
 
     const onMove = (e) => {
-      if (!gesto.activo || gesto.bloqueado) return
-      const dx = e.touches[0].clientX - gesto.x
-      const dy = e.touches[0].clientY - gesto.y
-      if (!gesto.intent) {
+      if (!g.activo || g.bloqueado) return
+      const dx = e.touches[0].clientX - g.x
+      const dy = e.touches[0].clientY - g.y
+      if (!g.intent) {
         if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return
         if (Math.abs(dy) > Math.abs(dx)) {
-          gesto.bloqueado = true
+          g.bloqueado = true
           return
         }
-        gesto.intent = true
+        g.intent = true
+        const lado = dx > 0 ? -1 : 1
+        const objetivo = indiceActualRef.current + lado
+        if (objetivo >= 0 && objetivo < TABS.length) {
+          setVecino({ id: TABS[objetivo].id, lado })
+        }
       }
       e.preventDefault()
       const umbral = 80
       const d = Math.abs(dx) > umbral ? Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35) : dx
-      el.style.transform = `translateX(${d}px)`
+      g.dx = d
+      track.style.transform = transformarTrack(anchoVista(vp), d)
     }
 
     const onEnd = () => {
-      if (!gesto.activo || gesto.bloqueado) return
-      gesto.activo = false
-      const dx = parseFloat(el.style.transform.match(/-?\d+(\.\d+)?/)?.[0] ?? 0)
-      const ancho = el.offsetWidth || 320
+      if (!g.activo || g.bloqueado) return
+      g.activo = false
+      const dx = g.dx
+      const vw = anchoVista(vp)
       const viejoI = indiceActualRef.current
       if (Math.abs(dx) > 60) {
-        const dir = Math.sign(dx)
-        const objetivo = viejoI + (dir > 0 ? -1 : 1)
+        const lado = dx > 0 ? -1 : 1
+        const objetivo = viejoI + lado
         if (objetivo < 0 || objetivo >= TABS.length) {
-          el.style.transition = 'transform 220ms cubic-bezier(0.32, 0.72, 0, 1)'
-          el.style.transform = 'translateX(0)'
+          animarTrack(track, vw, 0)
+          setTimeout(() => setVecino(null), 280)
           return
         }
-        el.style.transition = 'transform 210ms cubic-bezier(0.32, 0.72, 0, 1)'
-        el.style.transform = `translateX(${dir * ancho}px)`
+        const nuevoId = TABS[objetivo].id
+        animarTrack(track, vw, -lado * vw)
         setTimeout(() => {
-          setVista(TABS[objetivo].id)
-          el.style.transition = 'none'
-          el.style.transform = `translateX(${-dir * ancho}px)`
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => {
-              el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
-              el.style.transform = 'translateX(0)'
-            })
-          )
-        }, 200)
+          setVista(nuevoId)
+          setVecino(null)
+          restablecerTrack(vp, track)
+        }, 280)
       } else {
-        el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
-        el.style.transform = 'translateX(0)'
+        animarTrack(track, vw, 0)
+        setTimeout(() => setVecino(null), 280)
       }
     }
 
-    el.addEventListener('touchstart', onStart, { passive: true })
-    el.addEventListener('touchmove', onMove, { passive: false })
-    el.addEventListener('touchend', onEnd, { passive: true })
-    el.addEventListener('touchcancel', onEnd, { passive: true })
+    vp.addEventListener('touchstart', onStart, { passive: true })
+    vp.addEventListener('touchmove', onMove, { passive: false })
+    vp.addEventListener('touchend', onEnd, { passive: true })
+    vp.addEventListener('touchcancel', onEnd, { passive: true })
+    window.addEventListener('resize', onResize)
     return () => {
-      el.removeEventListener('touchstart', onStart)
-      el.removeEventListener('touchmove', onMove)
-      el.removeEventListener('touchend', onEnd)
-      el.removeEventListener('touchcancel', onEnd)
+      vp.removeEventListener('touchstart', onStart)
+      vp.removeEventListener('touchmove', onMove)
+      vp.removeEventListener('touchend', onEnd)
+      vp.removeEventListener('touchcancel', onEnd)
+      window.removeEventListener('resize', onResize)
     }
   }, [])
 
@@ -187,6 +216,117 @@ export default function App() {
   }
 
   const abrirModal = (materia, keyBase) => setModal({ materia, keyBase })
+
+  const renderTab = (id) => {
+    switch (id) {
+      case 'inicio':
+        return (
+          <Home
+            plan={plan}
+            efectivos={efectivos}
+            alcanzables={alcanzables}
+            notas={notas}
+            onAbrir={abrirModal}
+            irA={navegarA}
+          />
+        )
+      case 'malla':
+        return (
+          <main className="contenido">
+            <div className="malla-search">
+              <Search size={16} />
+              <input
+                type="search"
+                placeholder="Buscar materia en la malla…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value.toLowerCase())}
+                aria-label="Buscar materia en la malla"
+              />
+              {query && (
+                <button
+                  className="malla-search-clear"
+                  onClick={() => setQuery('')}
+                  aria-label="Limpiar búsqueda"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+
+            {NIVELES.map((n) => {
+              const nucleo = plan.materias_nucleo.filter((m) => m.nivel === n.numero)
+              const electivas = plan.materias_electivas.filter((m) => m.nivel === n.numero)
+              return (
+                <NivelSection
+                  key={n.numero}
+                  nivel={n.numero}
+                  nombre={n.nombre}
+                  nucleo={nucleo}
+                  electivas={electivas.length ? electivas : undefined}
+                  horasElectivasRequeridas={HORAS_REQUERIDAS[n.numero] ?? 0}
+                  efectivos={efectivos}
+                  alcanzables={alcanzables}
+                  fijar={fijar}
+                  onAbrir={abrirModal}
+                  nombrePorId={nombrePorId}
+                  notas={notas}
+                  query={query}
+                />
+              )
+            })}
+
+            <section className="nivel pps">
+              <div className="nivel-head">
+                <h2 className="nivel-titulo">
+                  <span className="nivel-num">✓</span>
+                  Práctica Profesional Supervisada
+                </h2>
+              </div>
+              <p className="pps-texto">
+                200 horas de práctica profesional. Acreditala cuando completes tus horas.
+              </p>
+              <div className="cards-grid">
+                <MateriaCard
+                  materia={PPS_MATERIA}
+                  keyBase="pps"
+                  estado={efectivos['pps'] ?? 0}
+                  alcanzable={alcanzables['pps'] ?? 0}
+                  fijar={fijar}
+                  onAbrir={abrirModal}
+                  nombrePorId={nombrePorId}
+                  efectivos={efectivos}
+                  notas={notas}
+                />
+              </div>
+            </section>
+          </main>
+        )
+      case 'mapa':
+        return (
+          <GrafoCorrelativas
+            plan={plan}
+            efectivos={efectivos}
+            alcanzables={alcanzables}
+            query={query}
+            onAbrir={abrirModal}
+          />
+        )
+      case 'planificador':
+        return <Planificador plan={plan} efectivos={efectivos} notas={notas} />
+      case 'calendario':
+        return (
+          <Calendario
+            plan={plan}
+            efectivos={efectivos}
+            lista={recordatorios}
+            guardar={guardarRecordatorio}
+            eliminar={eliminarRecordatorio}
+          />
+        )
+      default:
+        return null
+    }
+  }
 
   if (cargando) return <div className="auth-carga" aria-hidden="true" />
 
@@ -240,110 +380,16 @@ export default function App() {
         </nav>
       </div>
 
-      <div className="vista-swipe" ref={contenidoRef}>
-      {vista === 'inicio' && (
-        <Home
-          plan={plan}
-          efectivos={efectivos}
-          alcanzables={alcanzables}
-          notas={notas}
-          onAbrir={abrirModal}
-          irA={navegarA}
-        />
-      )}
-
-      {vista === 'malla' && (
-        <main className="contenido">
-          <div className="malla-search">
-            <Search size={16} />
-            <input
-              type="search"
-              placeholder="Buscar materia en la malla…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value.toLowerCase())}
-              aria-label="Buscar materia en la malla"
-            />
-            {query && (
-              <button
-                className="malla-search-clear"
-                onClick={() => setQuery('')}
-                aria-label="Limpiar búsqueda"
-              >
-                <X size={15} />
-              </button>
-            )}
+      <div className="vista-swipe" ref={viewportRef}>
+        <div className="vista-track" ref={trackRef}>
+          <div className="vista-pagina" aria-hidden={vecino?.lado !== -1}>
+            {vecino?.lado === -1 && renderTab(vecino.id)}
           </div>
-
-          {NIVELES.map((n) => {
-            const nucleo = plan.materias_nucleo.filter((m) => m.nivel === n.numero)
-            const electivas = plan.materias_electivas.filter((m) => m.nivel === n.numero)
-            return (
-              <NivelSection
-                key={n.numero}
-                nivel={n.numero}
-                nombre={n.nombre}
-                nucleo={nucleo}
-                electivas={electivas.length ? electivas : undefined}
-                horasElectivasRequeridas={HORAS_REQUERIDAS[n.numero] ?? 0}
-                efectivos={efectivos}
-                alcanzables={alcanzables}
-                fijar={fijar}
-                onAbrir={abrirModal}
-                nombrePorId={nombrePorId}
-                notas={notas}
-                query={query}
-              />
-            )
-          })}
-
-          <section className="nivel pps">
-            <div className="nivel-head">
-              <h2 className="nivel-titulo">
-                <span className="nivel-num">✓</span>
-                Práctica Profesional Supervisada
-              </h2>
-            </div>
-            <p className="pps-texto">
-              200 horas de práctica profesional. Acreditala cuando completes tus horas.
-            </p>
-            <div className="cards-grid">
-              <MateriaCard
-                materia={PPS_MATERIA}
-                keyBase="pps"
-                estado={efectivos['pps'] ?? 0}
-                alcanzable={alcanzables['pps'] ?? 0}
-                fijar={fijar}
-                onAbrir={abrirModal}
-                nombrePorId={nombrePorId}
-                efectivos={efectivos}
-                notas={notas}
-              />
-            </div>
-          </section>
-        </main>
-      )}
-
-      {vista === 'mapa' && (
-        <GrafoCorrelativas
-          plan={plan}
-          efectivos={efectivos}
-          alcanzables={alcanzables}
-          query={query}
-          onAbrir={abrirModal}
-        />
-      )}
-
-      {vista === 'planificador' && <Planificador plan={plan} efectivos={efectivos} notas={notas} />}
-
-      {vista === 'calendario' && (
-        <Calendario
-          plan={plan}
-          efectivos={efectivos}
-          lista={recordatorios}
-          guardar={guardarRecordatorio}
-          eliminar={eliminarRecordatorio}
-        />
-      )}
+          <div className="vista-pagina">{renderTab(vista)}</div>
+          <div className="vista-pagina" aria-hidden={vecino?.lado !== 1}>
+            {vecino?.lado === 1 && renderTab(vecino.id)}
+          </div>
+        </div>
       </div>
 
       <footer className="footer">
