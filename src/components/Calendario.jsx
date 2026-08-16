@@ -315,27 +315,48 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
 
     const onStart = (e) => {
       if (e.touches.length !== 1) return
-      arrastre.current = { activo: true, startX: e.touches[0].clientX, dx: 0 }
+      arrastre.current = {
+        activo: true,
+        horizontal: false,
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY,
+        dx: 0,
+      }
       el.style.transition = 'none'
       el.style.transform = 'translateX(0)'
+      el.style.willChange = 'transform'
     }
 
     const onMove = (e) => {
-      if (!arrastre.current.activo) return
-      let dx = e.touches[0].clientX - arrastre.current.startX
+      const a = arrastre.current
+      if (!a.activo) return
+      const dx = e.touches[0].clientX - a.startX
+      const dy = e.touches[0].clientY - a.startY
+      if (!a.horizontal) {
+        // Gestos verticales = scroll de la página, no los robamos.
+        if (Math.abs(dy) > Math.abs(dx) * 1.2 && Math.abs(dy) > 8) {
+          a.activo = false
+          el.style.willChange = ''
+          return
+        }
+        if (Math.abs(dx) < 8) return
+        a.horizontal = true
+      }
       const umbral = 90
-      if (Math.abs(dx) > umbral) dx = Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35)
-      arrastre.current.dx = dx
-      el.style.transform = `translateX(${dx}px)`
-      if (Math.abs(dx) > 8) e.preventDefault()
+      const d = Math.abs(dx) > umbral ? Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35) : dx
+      a.dx = d
+      el.style.transform = `translateX(${d}px)`
+      e.preventDefault()
     }
 
     const onEnd = () => {
-      if (!arrastre.current.activo) return
-      const dx = arrastre.current.dx
-      arrastre.current.activo = false
+      const a = arrastre.current
+      a.activo = false
+      el.style.willChange = ''
+      if (!a.horizontal) return
+      const dx = a.dx
       const ancho = el.offsetWidth || 320
-      el.style.transition = 'transform 220ms cubic-bezier(0.32, 0.72, 0, 1)'
+      el.style.transition = 'transform 180ms cubic-bezier(0.32, 0.72, 0, 1)'
       if (Math.abs(dx) > 60) {
         const dir = Math.sign(dx)
         el.style.transform = `translateX(${dir * ancho}px)`
@@ -344,10 +365,10 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
           el.style.transition = 'none'
           el.style.transform = `translateX(${-dir * ancho}px)`
           requestAnimationFrame(() => {
-            el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
+            el.style.transition = 'transform 180ms cubic-bezier(0.32, 0.72, 0, 1)'
             el.style.transform = 'translateX(0)'
           })
-        }, 210)
+        }, 150)
       } else {
         el.style.transform = 'translateX(0)'
       }
@@ -356,10 +377,12 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
     el.addEventListener('touchstart', onStart, { passive: true })
     el.addEventListener('touchmove', onMove, { passive: false })
     el.addEventListener('touchend', onEnd, { passive: true })
+    el.addEventListener('touchcancel', onEnd, { passive: true })
     return () => {
       el.removeEventListener('touchstart', onStart)
       el.removeEventListener('touchmove', onMove)
       el.removeEventListener('touchend', onEnd)
+      el.removeEventListener('touchcancel', onEnd)
     }
   }, [])
 

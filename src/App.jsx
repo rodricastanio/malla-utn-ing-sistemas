@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays, Search, X } from 'lucide-react'
 import { CapacitorUpdater } from '@capgo/capacitor-updater'
 import { usePlan } from './hooks/usePlan'
@@ -6,20 +6,22 @@ import { useAuth } from './hooks/useAuth'
 import { useRecordatorios } from './hooks/useRecordatorios'
 import Header from './components/Header'
 import Home from './components/Home'
-import NivelSection from './components/NivelSection'
 import ProgressBar from './components/ProgressBar'
 import MateriaModal from './components/MateriaModal'
-import MateriaCard from './components/MateriaCard'
 import PantallaLogin from './components/PantallaLogin'
-import GrafoCorrelativas from './components/GrafoCorrelativas'
-import Planificador from './components/Planificador'
-import Calendario from './components/Calendario'
 import { NIVELES, claveNucleo } from './lib/plan'
 import './index.css'
 
+const NivelSection = lazy(() => import('./components/NivelSection'))
+const MateriaCard = lazy(() => import('./components/MateriaCard'))
+const GrafoCorrelativas = lazy(() => import('./components/GrafoCorrelativas'))
+const Planificador = lazy(() => import('./components/Planificador'))
+const Calendario = lazy(() => import('./components/Calendario'))
+
 const HORAS_REQUERIDAS = { 3: 4, 4: 6, 5: 10 }
 
-const TRANSICION_TRACK = 'transform 260ms cubic-bezier(0.32, 0.72, 0, 1)'
+const TRANSICION_TRACK = 'transform 170ms cubic-bezier(0.32, 0.72, 0, 1)'
+const DURACION = 170
 const anchoVista = (vp) => vp?.offsetWidth || window.innerWidth || 320
 const transformarTrack = (vw, dx) => `translateX(${-vw + dx}px)`
 const animarTrack = (track, vw, dx) => {
@@ -124,8 +126,8 @@ export default function App() {
       )
       setTimeout(() => {
         track.style.willChange = ''
-      }, 320)
-    }, 280)
+      }, DURACION + 40)
+    }, Math.round(DURACION * 0.75))
   }
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export default function App() {
 
     const onStart = (e) => {
       if (e.touches.length !== 1) return
-      if (e.target.closest('.cal-swipe')) return
+      if (e.target.closest('.cal-swipe, .grafo-viewport')) return
       g.activo = true
       g.bloqueado = false
       g.intent = false
@@ -156,17 +158,22 @@ export default function App() {
       const dx = e.touches[0].clientX - g.x
       const dy = e.touches[0].clientY - g.y
       if (!g.intent) {
-        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return
-        if (Math.abs(dy) > Math.abs(dx)) {
+        if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return
+        // Si el gesto es vertical, es scroll de la página: no lo robamos.
+        if (Math.abs(dy) > Math.abs(dx) * 1.25) {
           g.bloqueado = true
+          track.style.willChange = ''
+          return
+        }
+        const lado = dx > 0 ? -1 : 1
+        const objetivo = indiceActualRef.current + lado
+        if (objetivo < 0 || objetivo >= TABS.length) {
+          g.bloqueado = true
+          track.style.willChange = ''
           return
         }
         g.intent = true
-        const lado = dx > 0 ? -1 : 1
-        const objetivo = indiceActualRef.current + lado
-        if (objetivo >= 0 && objetivo < TABS.length) {
-          setVecino({ id: TABS[objetivo].id, lado })
-        }
+        setVecino({ id: TABS[objetivo].id, lado })
       }
       e.preventDefault()
       const umbral = 80
@@ -176,8 +183,12 @@ export default function App() {
     }
 
     const onEnd = () => {
-      if (!g.activo || g.bloqueado) return
+      if (!g.activo) return
       g.activo = false
+      if (g.bloqueado) {
+        track.style.willChange = ''
+        return
+      }
       const dx = g.dx
       const vw = g.vw
       const viejoI = indiceActualRef.current
@@ -189,7 +200,7 @@ export default function App() {
           setTimeout(() => {
             setVecino(null)
             track.style.willChange = ''
-          }, 280)
+          }, DURACION + 40)
           return
         }
         const nuevoId = TABS[objetivo].id
@@ -198,13 +209,13 @@ export default function App() {
           setVista(nuevoId)
           setVecino(null)
           restablecerTrack(vp, track)
-        }, 280)
+        }, Math.round(DURACION * 0.85))
       } else {
         animarTrack(track, vw, 0)
         setTimeout(() => {
           setVecino(null)
           track.style.willChange = ''
-        }, 280)
+        }, DURACION + 40)
       }
     }
 
@@ -348,6 +359,10 @@ export default function App() {
     }
   }
 
+  const renderConSuspenso = (id) => (
+    <Suspense fallback={<div className="vista-suspense" aria-hidden="true" />}>{renderTab(id)}</Suspense>
+  )
+
   if (cargando) return <div className="auth-carga" aria-hidden="true" />
 
   if (!user && !esInvitado) {
@@ -403,11 +418,11 @@ export default function App() {
       <div className="vista-swipe" ref={viewportRef}>
         <div className="vista-track" ref={trackRef}>
           <div className="vista-pagina" aria-hidden={vecino?.lado !== -1}>
-            {vecino?.lado === -1 && renderTab(vecino.id)}
+            {vecino?.lado === -1 && renderConSuspenso(vecino.id)}
           </div>
-          <div className="vista-pagina">{renderTab(vista)}</div>
+          <div className="vista-pagina">{renderConSuspenso(vista)}</div>
           <div className="vista-pagina" aria-hidden={vecino?.lado !== 1}>
-            {vecino?.lado === 1 && renderTab(vecino.id)}
+            {vecino?.lado === 1 && renderConSuspenso(vecino.id)}
           </div>
         </div>
       </div>

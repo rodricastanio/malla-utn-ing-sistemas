@@ -1511,7 +1511,6 @@ body::before {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
-  will-change: transform;
   overscroll-behavior: none;
 }
 
@@ -1525,6 +1524,10 @@ body::before {
 .vista-track {
   display: flex;
   width: 100%;
+}
+
+.vista-suspense {
+  min-height: 60vh;
 }
 
 .vista-pagina {
@@ -3604,6 +3607,28 @@ body::before {
 }
 
 @media (hover: none) {
+  /* Rendimiento en pantallas táctiles (Android WebView): el backdrop-filter
+     con blur obliga a recomponer todo lo que pasa detrás de las barras fijas
+     en cada frame de scroll y es la causa principal del jank. Se apaga. */
+  .topbar,
+  .progress-rail,
+  .nav-rail,
+  .user-dropdown,
+  .acento-popover,
+  .overlay {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  body {
+    text-rendering: auto;
+  }
+
+  :root {
+    --sombra: 0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
+    --sombra-fuerte: 0 2px 6px rgba(0, 0, 0, 0.08), 0 10px 24px rgba(0, 0, 0, 0.14);
+  }
+
   .tooltip {
     display: none;
   }
