@@ -1513,6 +1513,24 @@ body::before {
   overscroll-behavior: none;
 }
 
+.vista-swipe {
+  touch-action: pan-y;
+  position: relative;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+.vista-track {
+  display: flex;
+  width: 100%;
+}
+
+.vista-pagina {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
 .vista-suspense {
   min-height: 60vh;
 }

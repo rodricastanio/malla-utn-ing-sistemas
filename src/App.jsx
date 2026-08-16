@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays, Search, X } from 'lucide-react'
 import { CapacitorUpdater } from '@capgo/capacitor-updater'
 import { usePlan } from './hooks/usePlan'
@@ -19,6 +19,11 @@ const Planificador = lazy(() => import('./components/Planificador'))
 const Calendario = lazy(() => import('./components/Calendario'))
 
 const HORAS_REQUERIDAS = { 3: 4, 4: 6, 5: 10 }
+
+const TRANSICION_TRACK = 'transform 260ms cubic-bezier(0.32, 0.72, 0, 1)'
+const DURACION = 260
+const anchoVista = (vp) => vp?.offsetWidth || window.innerWidth || 320
+const transformarTrack = (vw, dx) => `translateX(${-vw + dx}px)`
 
 const TABS = [
   { id: 'inicio', etiqueta: 'Inicio', icono: HomeIcon },
@@ -56,6 +61,7 @@ export default function App() {
   const [modal, setModal] = useState(null)
   const [vista, setVista] = useState('inicio')
   const [version, setVersion] = useState(null)
+  const [vecino, setVecino] = useState(null)
 
   useEffect(() => {
     if (window.Capacitor?.isNativePlatform()) {
@@ -65,7 +71,146 @@ export default function App() {
     }
   }, [])
 
-  const navegarA = (id) => setVista(id)
+  const viewportRef = useRef(null)
+  const trackRef = useRef(null)
+  const gesto = useRef({ activo: false, x: 0, y: 0, bloqueado: false, intent: false, dx: 0, vw: 0 })
+  const indiceActualRef = useRef(0)
+  indiceActualRef.current = TABS.findIndex((t) => t.id === vista)
+  const vistaRef = useRef(vista)
+  vistaRef.current = vista
+
+  const navegarA = (id) => {
+    const nuevoI = TABS.findIndex((t) => t.id === id)
+    const viejoI = indiceActualRef.current
+    if (nuevoI === viejoI) return
+    const track = trackRef.current
+    const vp = viewportRef.current
+    if (!track || !vp) {
+      setVista(id)
+      return
+    }
+    const vw = anchoVista(vp)
+    const lado = nuevoI > viejoI ? 1 : -1
+    setVecino({ id, lado })
+    track.style.transition = 'none'
+    track.style.transform = transformarTrack(vw, 0)
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        track.style.transition = TRANSICION_TRACK
+        track.style.transform = transformarTrack(vw, -lado * vw)
+      })
+    )
+    setTimeout(() => {
+      setVista(id)
+      setVecino(null)
+      track.style.transition = 'none'
+      track.style.transform = transformarTrack(vw, 0)
+    }, DURACION + 40)
+  }
+
+  useEffect(() => {
+    const vp = viewportRef.current
+    const track = trackRef.current
+    if (!vp || !track) return
+    const g = gesto.current
+
+    track.style.transition = 'none'
+    track.style.transform = transformarTrack(anchoVista(vp), 0)
+    const onResize = () => {
+      track.style.transition = 'none'
+      track.style.transform = transformarTrack(anchoVista(vp), 0)
+    }
+
+    const onStart = (e) => {
+      if (e.touches.length !== 1) return
+      // En la Malla el swipe no se activa nunca: solo scroll vertical.
+      if (vistaRef.current === 'malla') return
+      if (e.target.closest('.cal-swipe, .grafo-viewport')) return
+      g.activo = true
+      g.bloqueado = false
+      g.intent = false
+      g.dx = 0
+      g.vw = anchoVista(vp)
+      g.x = e.touches[0].clientX
+      g.y = e.touches[0].clientY
+    }
+
+    const onMove = (e) => {
+      if (!g.activo || g.bloqueado) return
+      const dx = e.touches[0].clientX - g.x
+      const dy = e.touches[0].clientY - g.y
+      if (!g.intent) {
+        if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return
+        // Gesto vertical: es scroll de la página, nunca lo robamos.
+        if (Math.abs(dy) > Math.abs(dx) * 1.5) {
+          g.bloqueado = true
+          return
+        }
+        const lado = dx > 0 ? -1 : 1
+        const objetivo = indiceActualRef.current + lado
+        if (objetivo < 0 || objetivo >= TABS.length) {
+          g.bloqueado = true
+          return
+        }
+        g.intent = true
+        setVecino({ id: TABS[objetivo].id, lado })
+      }
+      e.preventDefault()
+      const umbral = 80
+      const d = Math.abs(dx) > umbral ? Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35) : dx
+      g.dx = d
+      track.style.transform = transformarTrack(g.vw, d)
+    }
+
+    const onEnd = () => {
+      if (!g.activo) return
+      g.activo = false
+      if (g.bloqueado) return
+      const dx = g.dx
+      const vw = g.vw
+      const viejoI = indiceActualRef.current
+      const volver = () => {
+        track.style.transition = TRANSICION_TRACK
+        track.style.transform = transformarTrack(vw, 0)
+        setTimeout(() => setVecino(null), DURACION + 30)
+      }
+      if (Math.abs(dx) > 60) {
+        const lado = dx > 0 ? -1 : 1
+        const objetivo = viejoI + lado
+        if (objetivo < 0 || objetivo >= TABS.length) {
+          volver()
+          return
+        }
+        const nuevoId = TABS[objetivo].id
+        track.style.transition = TRANSICION_TRACK
+        track.style.transform = transformarTrack(vw, -lado * vw)
+        setTimeout(() => {
+          setVista(nuevoId)
+          setVecino(null)
+          track.style.transition = 'none'
+          track.style.transform = transformarTrack(vw, 0)
+          requestAnimationFrame(() => {
+            track.style.transition = TRANSICION_TRACK
+          })
+        }, DURACION + 30)
+      } else {
+        volver()
+      }
+    }
+
+    vp.addEventListener('touchstart', onStart, { passive: true })
+    vp.addEventListener('touchmove', onMove, { passive: false })
+    vp.addEventListener('touchend', onEnd, { passive: true })
+    vp.addEventListener('touchcancel', onEnd, { passive: true })
+    window.addEventListener('resize', onResize)
+    return () => {
+      vp.removeEventListener('touchstart', onStart)
+      vp.removeEventListener('touchmove', onMove)
+      vp.removeEventListener('touchend', onEnd)
+      vp.removeEventListener('touchcancel', onEnd)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
 
   const nombrePorId = useMemo(() => {
     const mapa = new Map()
@@ -249,7 +394,17 @@ export default function App() {
         </nav>
       </div>
 
-      {renderConSuspenso(vista)}
+      <div className="vista-swipe" ref={viewportRef}>
+        <div className="vista-track" ref={trackRef}>
+          <div className="vista-pagina" aria-hidden={vecino?.lado !== -1}>
+            {vecino?.lado === -1 && renderConSuspenso(vecino.id)}
+          </div>
+          <div className="vista-pagina">{renderConSuspenso(vista)}</div>
+          <div className="vista-pagina" aria-hidden={vecino?.lado !== 1}>
+            {vecino?.lado === 1 && renderConSuspenso(vecino.id)}
+          </div>
+        </div>
+      </div>
 
       <footer className="footer">
         <p>
