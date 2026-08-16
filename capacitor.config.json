@@ -17,6 +17,10 @@
       "overlaysWebView": true,
       "style": "LIGHT",
       "backgroundColor": "#f2f2f7"
+    },
+    "CapacitorUpdater": {
+      "autoUpdate": "onLaunch",
+      "defaultChannel": "production"
     }
   }
 }
