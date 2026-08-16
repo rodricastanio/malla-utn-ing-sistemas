@@ -41,7 +41,7 @@ jobs:
         run: npm run build
 
       - name: Deploy Live Update a Capgo
-        if: ${{ secrets.CAPGO_TOKEN != '' }}
+        if: env.CAPGO_TOKEN != ''
         run: npx @capgo/cli@latest bundle upload --channel production --bundle "1.0.${{ github.run_number }}" --comment "CI ${{ github.sha }}" --version-exists-ok --no-key
         env:
           CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
