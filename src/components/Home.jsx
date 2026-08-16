@@ -73,7 +73,7 @@ export default function Home({ plan, efectivos, alcanzables, notas, onAbrir, irA
           <div className="stat">
             <TrendingUp size={18} />
             <span>
-              <strong>{promedio != null ? promedio.toFixed(1) : '—'}</strong> promedio
+              <strong>{promedio != null ? promedio.toFixed(2) : '—'}</strong> promedio
               {conNota.length > 0 && ` (${conNota.length})`}
             </span>
           </div>

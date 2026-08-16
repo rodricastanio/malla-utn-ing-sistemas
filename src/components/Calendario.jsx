@@ -304,6 +304,65 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
       return { anio: Math.floor(t / 12), mes: (t % 12) + 1 }
     })
 
+  const tarjetaRef = useRef(null)
+  const arrastre = useRef({ activo: false, startX: 0, dx: 0 })
+  const irMesRef = useRef(irMes)
+  irMesRef.current = irMes
+
+  useEffect(() => {
+    const el = tarjetaRef.current
+    if (!el) return
+
+    const onStart = (e) => {
+      if (e.touches.length !== 1) return
+      arrastre.current = { activo: true, startX: e.touches[0].clientX, dx: 0 }
+      el.style.transition = 'none'
+      el.style.transform = 'translateX(0)'
+    }
+
+    const onMove = (e) => {
+      if (!arrastre.current.activo) return
+      let dx = e.touches[0].clientX - arrastre.current.startX
+      const umbral = 90
+      if (Math.abs(dx) > umbral) dx = Math.sign(dx) * (umbral + (Math.abs(dx) - umbral) * 0.35)
+      arrastre.current.dx = dx
+      el.style.transform = `translateX(${dx}px)`
+      if (Math.abs(dx) > 8) e.preventDefault()
+    }
+
+    const onEnd = () => {
+      if (!arrastre.current.activo) return
+      const dx = arrastre.current.dx
+      arrastre.current.activo = false
+      const ancho = el.offsetWidth || 320
+      el.style.transition = 'transform 220ms cubic-bezier(0.32, 0.72, 0, 1)'
+      if (Math.abs(dx) > 60) {
+        const dir = Math.sign(dx)
+        el.style.transform = `translateX(${dir * ancho}px)`
+        setTimeout(() => {
+          irMesRef.current(dir > 0 ? -1 : 1)
+          el.style.transition = 'none'
+          el.style.transform = `translateX(${-dir * ancho}px)`
+          requestAnimationFrame(() => {
+            el.style.transition = 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)'
+            el.style.transform = 'translateX(0)'
+          })
+        }, 210)
+      } else {
+        el.style.transform = 'translateX(0)'
+      }
+    }
+
+    el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchmove', onMove, { passive: false })
+    el.addEventListener('touchend', onEnd, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchmove', onMove)
+      el.removeEventListener('touchend', onEnd)
+    }
+  }, [])
+
   const abrirNuevo = () => setEditando({ fecha: seleccionado ?? hoy })
 
   return (
@@ -324,7 +383,7 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
       </div>
 
       <div className="cal-grid">
-        <div className="cal-card">
+        <div className="cal-card cal-swipe" ref={tarjetaRef}>
           <div className="cal-mes-head">
             <button className="cal-nav" onClick={() => irMes(-1)} aria-label="Mes anterior">
               <ChevronLeft size={18} />

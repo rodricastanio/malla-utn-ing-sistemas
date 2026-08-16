@@ -74,7 +74,10 @@ export function useRecordatorios(user, esInvitado = false) {
       }
       const ids = rows.map((r) => r.id)
       if (ids.length) {
-        const { error } = await supabase.from('recordatorios').delete().not('id', 'in', ids)
+        const { error } = await supabase
+          .from('recordatorios')
+          .delete()
+          .filter('id', 'not.in', `(${ids.join(',')})`)
         if (error) {
           marcarPendiente()
           return

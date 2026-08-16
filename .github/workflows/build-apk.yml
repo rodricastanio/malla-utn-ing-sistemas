@@ -60,6 +60,9 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug assembleRelease
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: ${{ format('1.0.{0}', github.run_number) }}
 
       - uses: actions/upload-artifact@v5
         with:

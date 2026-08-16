@@ -1502,6 +1502,15 @@ body::before {
   box-shadow: var(--sombra);
 }
 
+.cal-swipe {
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  will-change: transform;
+  overscroll-behavior: none;
+}
+
 .cal-card-head {
   display: flex;
   align-items: center;

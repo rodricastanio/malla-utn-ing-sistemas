@@ -206,7 +206,7 @@ function ModoPromedio({ plan, efectivos, notas }) {
             </div>
             {res.porNota.yaAlcanzado ? (
               <p className="planif-detalle ok">
-                Ya alcanzás el promedio de <strong>{objetivo}</strong> (tenés {promedio.toFixed(1)}).
+                Ya alcanzás el promedio de <strong>{objetivo}</strong> (tenés {promedio.toFixed(2)}).
               </p>
             ) : res.porNota.imposibleNota ? (
               <p className="planif-detalle error">
