@@ -22,6 +22,10 @@ android {
         }
     }
     signingConfigs {
+        debug {
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
         release {
             if (keystorePath) {
                 storeFile file(keystorePath)
@@ -29,6 +33,8 @@ android {
                 keyAlias keyAlias
                 keyPassword keyPass
             }
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     buildTypes {
