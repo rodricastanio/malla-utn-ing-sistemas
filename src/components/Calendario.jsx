@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, createPortal } from 'react'
 import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, X, Bell } from 'lucide-react'
 import { claveNucleo, claveElectiva } from '../lib/plan'
 
@@ -539,7 +539,7 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
         </div>
       </div>
 
-      {editando && (
+      {editando && createPortal(
         <EditorRecordatorio
           record={editando.id ? editando : null}
           materias={opcionesMateria}
@@ -547,7 +547,8 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
           onGuardar={(r) => guardar({ ...editando, ...r })}
           onEliminar={eliminar}
           onCerrar={() => setEditando(null)}
-        />
+        />,
+        document.body
       )}
     </section>
   )

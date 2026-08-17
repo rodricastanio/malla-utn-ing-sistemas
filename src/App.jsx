@@ -342,9 +342,7 @@ export default function App() {
     <Suspense fallback={<div className="vista-suspense" aria-hidden="true" />}>{renderTab(id)}</Suspense>
   )
 
-  if (cargando) return <div className="auth-carga" aria-hidden="true" />
-
-  if (!user && !esInvitado) {
+  if (!cargando && !user && !esInvitado) {
     return (
       <PantallaLogin
         signInGoogle={signInGoogle}
@@ -357,6 +355,7 @@ export default function App() {
 
   return (
     <div className="app">
+      {cargando && <div className="auth-carga" aria-hidden="true" />}
       <div className="sticky-head">
         <Header
           tema={tema}
