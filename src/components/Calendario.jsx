@@ -229,7 +229,7 @@ function EditorRecordatorio({ record, materias, sinMaterias, onGuardar, onElimin
   )
 }
 
-export default function Calendario({ plan, efectivos, lista, guardar, eliminar }) {
+export default function Calendario({ plan, efectivos, lista, guardar, eliminar, portalRef }) {
   const hoy = hoyISO()
   const hoyDate = new Date()
   const [mesVista, setMesVista] = useState({ anio: hoyDate.getFullYear(), mes: hoyDate.getMonth() + 1 })
@@ -539,7 +539,7 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
         </div>
       </div>
 
-      {editando && createPortal(
+      {editando && portalRef?.current && createPortal(
         <EditorRecordatorio
           record={editando.id ? editando : null}
           materias={opcionesMateria}
@@ -548,7 +548,7 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar }
           onEliminar={eliminar}
           onCerrar={() => setEditando(null)}
         />,
-        document.body
+        portalRef.current
       )}
     </section>
   )

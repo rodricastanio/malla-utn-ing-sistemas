@@ -73,6 +73,7 @@ export default function App() {
 
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
+  const portalRef = useRef(null)
   const gesto = useRef({ activo: false, x: 0, y: 0, bloqueado: false, intent: false, dx: 0, vw: 0 })
   const indiceActualRef = useRef(0)
   indiceActualRef.current = TABS.findIndex((t) => t.id === vista)
@@ -331,6 +332,7 @@ export default function App() {
             lista={recordatorios}
             guardar={guardarRecordatorio}
             eliminar={eliminarRecordatorio}
+            portalRef={portalRef}
           />
         )
       default:
@@ -412,6 +414,8 @@ export default function App() {
         </p>
         {version && <span className="footer-version">v{version}</span>}
       </footer>
+
+      <div ref={portalRef} />
 
       {modal && (
         <MateriaModal
