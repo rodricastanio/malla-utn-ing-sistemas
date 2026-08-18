@@ -173,8 +173,16 @@ export function usePlan(user, esInvitado = false) {
         const localInt = intentosRef.current
         const localNot = notasRef.current
         if (data) {
-          const mergeInt = { ...(data.intentos ?? {}), ...localInt }
-          const mergeNot = { ...(data.notas ?? {}), ...localNot }
+          const remoteInt = data.intentos ?? {}
+          const remoteNot = data.notas ?? {}
+          const mergeInt = { ...remoteInt }
+          for (const k of Object.keys(localInt)) {
+            if (localInt[k] === null || k in remoteInt) mergeInt[k] = localInt[k]
+          }
+          const mergeNot = { ...remoteNot }
+          for (const k of Object.keys(localNot)) {
+            if (localNot[k] === null || k in remoteNot) mergeNot[k] = localNot[k]
+          }
           setIntentos(mergeInt)
           setNotas(mergeNot)
           if (data.accento) {
@@ -229,10 +237,8 @@ export function usePlan(user, esInvitado = false) {
       if ((prev[key] ?? 0) === siguiente) return prev
       if (prev[key] === 3 && siguiente < 3 && notasRef.current[key] != null) {
         setNotas((prevNotas) => {
-          if (!(key in prevNotas)) return prevNotas
-          const copia = { ...prevNotas }
-          delete copia[key]
-          return copia
+          if (prevNotas[key] === null) return prevNotas
+          return { ...prevNotas, [key]: null }
         })
       }
       return { ...prev, [key]: siguiente }
@@ -243,10 +249,8 @@ export function usePlan(user, esInvitado = false) {
     setNotas((prev) => {
       const limpio = valor == null || Number.isNaN(valor)
       if (limpio) {
-        if (!(key in prev)) return prev
-        const copia = { ...prev }
-        delete copia[key]
-        return copia
+        if (prev[key] === null) return prev
+        return { ...prev, [key]: null }
       }
       return { ...prev, [key]: valor }
     })
