@@ -17,6 +17,23 @@ const TIPOS = {
   otro: { nombre: 'Otro', color: 'gris' },
 }
 
+const COLORES = [
+  { id: 'tomate', hex: '#d50000' },
+  { id: 'flamenco', hex: '#e67c73' },
+  { id: 'mostaza', hex: '#f6bf26' },
+  { id: 'mandarina', hex: '#f4511e' },
+  { id: 'lima', hex: '#33b679' },
+  { id: 'albahaca', hex: '#0b8043' },
+  { id: 'aguamarina', hex: '#039be5' },
+  { id: 'azul', hex: '#3f51b5' },
+  { id: 'lavanda', hex: '#7986cb' },
+  { id: 'uva', hex: '#8e24aa' },
+  { id: 'gris', hex: '#616161' },
+]
+
+const COLOR_MAP = Object.fromEntries(COLORES.map((c) => [c.id, c.hex]))
+const COLORES_DEFAULT = { violeta: '#af52de', azul: '#007aff', naranja: '#ff9500', gris: '#8e8e93' }
+
 function hoyISO() {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -111,6 +128,7 @@ function SelectPersonalizado({ valor, opciones, onCambio, ariaLabel }) {
 function EditorRecordatorio({ record, materias, sinMaterias, onGuardar, onEliminar, onCerrar }) {
   const [titulo, setTitulo] = useState(record?.titulo ?? '')
   const [tipo, setTipo] = useState(record?.tipo ?? 'otro')
+  const [color, setColor] = useState(record?.color ?? '')
   const [materiaId, setMateriaId] = useState(record?.materia_id ?? '')
   const [fecha, setFecha] = useState(record?.fecha ?? hoyISO())
   const [descripcion, setDescripcion] = useState(record?.descripcion ?? '')
@@ -131,6 +149,7 @@ function EditorRecordatorio({ record, materias, sinMaterias, onGuardar, onElimin
       id: record?.id ?? nuevoId(),
       titulo: titulo.trim(),
       tipo,
+      color: color || null,
       materia_id: materiaId || null,
       fecha,
       descripcion: descripcion.trim(),
@@ -178,6 +197,23 @@ function EditorRecordatorio({ record, materias, sinMaterias, onGuardar, onElimin
               <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
             </label>
           </div>
+
+          <label className="cal-form-campo">
+            <span>Color</span>
+            <div className="cal-color-picker">
+              {COLORES.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`cal-color-swatch${color === c.id ? ' sel' : ''}`}
+                  style={{ background: c.hex }}
+                  onClick={() => setColor(color === c.id ? '' : c.id)}
+                  aria-label={c.id}
+                  title={c.id}
+                />
+              ))}
+            </div>
+          </label>
 
           <label className="cal-form-campo">
             <span>Materia (opcional)</span>
@@ -450,12 +486,16 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar, 
                   <span className="cal-dia-num">{c.dia}</span>
                   {recs.length > 0 && (
                     <span className="cal-puntos">
-                      {recs.slice(0, 3).map((r) => (
-                        <span
-                          key={r.id}
-                          className={`cal-punto punto-${TIPOS[r.tipo]?.color ?? 'gris'}`}
-                        />
-                      ))}
+                      {recs.slice(0, 3).map((r) => {
+                        const cHex = COLOR_MAP[r.color] || COLORES_DEFAULT[TIPOS[r.tipo]?.color] || COLORES_DEFAULT.gris
+                        return (
+                          <span
+                            key={r.id}
+                            className="cal-punto"
+                            style={{ background: cHex }}
+                          />
+                        )
+                      })}
                     </span>
                   )}
                 </button>
@@ -558,9 +598,10 @@ export default function Calendario({ plan, efectivos, lista, guardar, eliminar, 
 function CalItem({ record, nombrePorId, onEditar, onEliminar }) {
   const tipo = TIPOS[record.tipo] ?? TIPOS.otro
   const materia = record.materia_id ? nombrePorId.get(record.materia_id) : null
+  const cHex = COLOR_MAP[record.color] || COLORES_DEFAULT[tipo.color] || COLORES_DEFAULT.gris
   return (
     <li className="cal-item">
-      <span className={`cal-item-borde borde-${tipo.color}`} />
+      <span className="cal-item-borde" style={{ background: cHex }} />
       <div className="cal-item-texto">
         <strong>{record.titulo}</strong>
         <span>

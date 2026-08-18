@@ -19,7 +19,7 @@
   --gris: #8e8e93;
   --gris-suave: rgba(60, 60, 67, 0.07);
   --card-fade: rgba(255, 255, 255, 0.55);
-  --topbar-fondo: rgba(255, 255, 255, 0.75);
+  --topbar-fondo: #ffffff;
   --sombra: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
   --sombra-fuerte: 0 2px 6px rgba(0, 0, 0, 0.08), 0 24px 60px rgba(0, 0, 0, 0.18);
   --borde-tarjeta: 1px solid rgba(60, 60, 67, 0.1);
@@ -48,7 +48,7 @@
   --gris: #98989e;
   --gris-suave: rgba(235, 235, 245, 0.1);
   --card-fade: rgba(28, 28, 30, 0.6);
-  --topbar-fondo: rgba(22, 22, 23, 0.78);
+  --topbar-fondo: #1c1c1e;
   --sombra: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
   --sombra-fuerte: 0 2px 6px rgba(0, 0, 0, 0.6), 0 24px 60px rgba(0, 0, 0, 0.7);
   --borde-tarjeta: 1px solid rgba(255, 255, 255, 0.09);
@@ -235,8 +235,6 @@ body::before {
 
 .progress-rail {
   background: var(--topbar-fondo);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--separador);
   padding: 0.5rem 1.5rem 0.65rem;
 }
@@ -262,8 +260,6 @@ body::before {
 /* ── Navegación de secciones ─────────────────────────── */
 .nav-rail {
   background: var(--topbar-fondo);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--separador);
   padding: 0.5rem 1.5rem;
   overflow-x: auto;
@@ -2014,6 +2010,31 @@ body::before {
   border: var(--borde-tarjeta);
   border-radius: 10px;
   padding: 0.5rem 0.65rem;
+}
+
+.cal-color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.cal-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s var(--suave), border-color 0.15s var(--suave);
+  padding: 0;
+}
+
+.cal-color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.cal-color-swatch.sel {
+  border-color: var(--texto);
+  transform: scale(1.1);
 }
 
 .modal-recordatorio .modal-titulo {
