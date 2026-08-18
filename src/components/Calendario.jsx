@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState, createPortal } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, X, Bell } from 'lucide-react'
 import { claveNucleo, claveElectiva } from '../lib/plan'
 
