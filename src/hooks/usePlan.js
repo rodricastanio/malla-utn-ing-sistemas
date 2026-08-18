@@ -80,9 +80,10 @@ export function usePlan(user, esInvitado = false) {
   const sincronizando = useRef(false)
   const cargadoRef = useRef(false)
   const accentoRef = useRef(accento)
+  const temaRef = useRef(tema)
   const esInvitadoRef = useRef(esInvitado)
 
-  const empujar = useCallback(async (nuevosIntentos, nuevasNotas, nuevoAcento) => {
+  const empujar = useCallback(async (nuevosIntentos, nuevasNotas, nuevoAcento, nuevoTema) => {
     const u = userRef.current
     if (!u || !supabase) return
     try {
@@ -94,6 +95,7 @@ export function usePlan(user, esInvitado = false) {
             intentos: nuevosIntentos ?? {},
             notas: nuevasNotas ?? {},
             accento: nuevoAcento ?? accentoRef.current ?? null,
+            tema: nuevoTema ?? temaRef.current ?? null,
             updated_at: new Date().toISOString(),
           },
           { onConflict: 'id' }
@@ -125,6 +127,7 @@ export function usePlan(user, esInvitado = false) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = tema
+    temaRef.current = tema
     const meta = document.querySelector('meta[name="theme-color"]')
     if (meta) meta.setAttribute('content', tema === 'dark' ? '#000000' : '#f2f2f7')
     try {
@@ -132,7 +135,10 @@ export function usePlan(user, esInvitado = false) {
     } catch {
       /* ignorar */
     }
-  }, [tema])
+    if (cargadoRef.current && user && supabase) {
+      empujar(intentosRef.current, notasRef.current, accentoRef.current, tema)
+    }
+  }, [tema, user, empujar])
 
   useEffect(() => {
     document.documentElement.dataset.accento = accento
@@ -167,15 +173,19 @@ export function usePlan(user, esInvitado = false) {
         const localInt = intentosRef.current
         const localNot = notasRef.current
         if (data) {
-          const mergeInt = { ...localInt, ...(data.intentos ?? {}) }
-          const mergeNot = { ...localNot, ...(data.notas ?? {}) }
+          const mergeInt = { ...(data.intentos ?? {}), ...localInt }
+          const mergeNot = { ...(data.notas ?? {}), ...localNot }
           setIntentos(mergeInt)
           setNotas(mergeNot)
           if (data.accento) {
             accentoRef.current = data.accento
             setAccento(data.accento)
           }
-          empujar(mergeInt, mergeNot, accentoRef.current)
+          if (data.tema) {
+            temaRef.current = data.tema
+            setTema(data.tema)
+          }
+          empujar(mergeInt, mergeNot, accentoRef.current, temaRef.current)
         } else {
           empujar(localInt, localNot, accentoRef.current)
         }
@@ -217,6 +227,14 @@ export function usePlan(user, esInvitado = false) {
     setIntentos((prev) => {
       const siguiente = Math.max(0, Math.min(3, nivel))
       if ((prev[key] ?? 0) === siguiente) return prev
+      if (prev[key] === 3 && siguiente < 3 && notasRef.current[key] != null) {
+        setNotas((prevNotas) => {
+          if (!(key in prevNotas)) return prevNotas
+          const copia = { ...prevNotas }
+          delete copia[key]
+          return copia
+        })
+      }
       return { ...prev, [key]: siguiente }
     })
   }, [])

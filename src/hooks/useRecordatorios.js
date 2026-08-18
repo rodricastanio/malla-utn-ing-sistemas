@@ -62,6 +62,7 @@ export function useRecordatorios(user, esInvitado = false) {
         titulo: r.titulo,
         materia_id: r.materia_id || null,
         tipo: r.tipo || 'otro',
+        color: r.color || null,
         fecha: r.fecha,
         descripcion: r.descripcion || '',
       }))

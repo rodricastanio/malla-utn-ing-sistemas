@@ -93,12 +93,16 @@ export default function MateriaModal({
             const activo = estado === e.nivel
             const habilitado = e.nivel <= alcanzable
             const Icono = ICONO_ESTADO[e.nivel] ?? Lock
+            const bajandoDePromo = estado === 3 && e.nivel < 3 && nota != null
             return (
               <button
                 key={e.nivel}
                 className={`step step-${e.nivel}${activo ? ' activo' : ''}`}
                 disabled={!habilitado || activo}
-                onClick={() => fijar(keyBase, e.nivel)}
+                onClick={() => {
+                  if (bajandoDePromo && !window.confirm('Esta materia tiene nota cargada. Si bajás el estado se va a eliminar la nota. ¿Continuar?')) return
+                  fijar(keyBase, e.nivel)
+                }}
               >
                 <Icono size={16} strokeWidth={2.5} />
                 <span>{e.etiqueta}</span>
@@ -122,6 +126,7 @@ export default function MateriaModal({
               onChange={(e) => {
                 const v = e.target.value
                 if (v === '') {
+                  if (nota != null && !window.confirm('¿Seguro que querés eliminar la nota?')) return
                   setNota(keyBase, null)
                   return
                 }
