@@ -1,9 +1,10 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
-import { Home as HomeIcon, LayoutGrid, Network, Calculator, CalendarDays, Search, X } from 'lucide-react'
+import { Home as HomeIcon, LayoutGrid, Calculator, CalendarDays, NotebookPen, Search, X } from 'lucide-react'
 import { CapacitorUpdater } from '@capgo/capacitor-updater'
 import { usePlan } from './hooks/usePlan'
 import { useAuth } from './hooks/useAuth'
 import { useRecordatorios } from './hooks/useRecordatorios'
+import { useNotasMaterias } from './hooks/useNotasMaterias'
 import Header from './components/Header'
 import Home from './components/Home'
 import ProgressBar from './components/ProgressBar'
@@ -17,6 +18,7 @@ const MateriaCard = lazy(() => import('./components/MateriaCard'))
 const GrafoCorrelativas = lazy(() => import('./components/GrafoCorrelativas'))
 const Planificador = lazy(() => import('./components/Planificador'))
 const Calendario = lazy(() => import('./components/Calendario'))
+const Notas = lazy(() => import('./components/Notas'))
 
 const HORAS_REQUERIDAS = { 3: 4, 4: 6, 5: 10 }
 
@@ -29,8 +31,8 @@ const TABS = [
   { id: 'inicio', etiqueta: 'Inicio', icono: HomeIcon },
   { id: 'malla', etiqueta: 'Malla', icono: LayoutGrid },
   { id: 'calendario', etiqueta: 'Calendario', icono: CalendarDays },
+  { id: 'notas', etiqueta: 'Notas', icono: NotebookPen },
   { id: 'planificador', etiqueta: 'Planificador', icono: Calculator },
-  { id: 'mapa', etiqueta: 'Mapa', icono: Network },
 ]
 
 const PPS_MATERIA = {
@@ -57,6 +59,7 @@ export default function App() {
     user,
     esInvitado
   )
+  const { lista: notasMaterias, guardar: guardarNotaMateria } = useNotasMaterias(user, esInvitado)
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null)
   const [vista, setVista] = useState('inicio')
@@ -320,6 +323,17 @@ export default function App() {
             alcanzables={alcanzables}
             query={query}
             onAbrir={abrirModal}
+          />
+        )
+      case 'notas':
+        return (
+          <Notas
+            plan={plan}
+            efectivos={efectivos}
+            lista={notasMaterias}
+            guardar={guardarNotaMateria}
+            irA={navegarA}
+            portalRef={portalRef}
           />
         )
       case 'planificador':

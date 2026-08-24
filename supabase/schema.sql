@@ -51,3 +51,29 @@ create index if not exists recordatorios_fecha_idx on public.recordatorios (perf
 -- Pegar en Supabase → SQL Editor → Run
 alter table public.perfiles
   add column if not exists accento text;
+
+-- Notas de cursada (checklist de tareas por materia)
+-- id = clave de la materia ('n-12', 'e-3', 'pps')
+-- Pegar en Supabase → SQL Editor → Run
+create table if not exists public.notas_materia (
+  id text primary key,
+  perfil_id uuid not null references public.perfiles (id) on delete cascade,
+  tareas jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.notas_materia enable row level security;
+
+create policy "lectura propia" on public.notas_materia
+  for select using (auth.uid() = perfil_id);
+
+create policy "insercion propia" on public.notas_materia
+  for insert with check (auth.uid() = perfil_id);
+
+create policy "actualizacion propia" on public.notas_materia
+  for update using (auth.uid() = perfil_id) with check (auth.uid() = perfil_id);
+
+create policy "borrado propio" on public.notas_materia
+  for delete using (auth.uid() = perfil_id);
+
+create index if not exists notas_materia_perfil_idx on public.notas_materia (perfil_id);
