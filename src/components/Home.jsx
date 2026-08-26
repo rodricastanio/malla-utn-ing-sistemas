@@ -5,7 +5,7 @@ const SECCIONES = [
   { id: 'malla', icono: LayoutGrid, titulo: 'Malla', desc: 'Marcá tu avance materia por materia; las correlativas se desbloquean solas.' },
   { id: 'planificador', icono: Calculator, titulo: 'Planificador', desc: 'Proyectá un promedio objetivo y estimá tu fecha de egreso.' },
   { id: 'calendario', icono: CalendarDays, titulo: 'Calendario', desc: 'Recordatorios de mesas de examen e inscripciones.' },
-  { id: 'notas', icono: NotebookPen, titulo: 'Notas', desc: 'Tasks por cada materia que estás cursando, estilo Apple Notes.' },
+  { id: 'notas', icono: NotebookPen, titulo: 'Notas', desc: 'Tasks por cada materia que estás cursando.' },
   { id: 'mapa', icono: Network, titulo: 'Mapa de correlativas', desc: 'Vista en grafo de las dependencias entre materias.' },
 ]
 

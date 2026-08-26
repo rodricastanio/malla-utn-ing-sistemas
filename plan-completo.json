@@ -1,0 +1,1183 @@
+{
+  "carrera": "Ingeniería en Sistemas",
+  "institucion": "FRENTE - Fuerza Renovadora Tecnológica",
+  "total_materias": 53,
+  "practica_profesional_supervisada": {
+    "horas_totales": 200,
+    "correlativas_para_cursar": [],
+    "correlativas_para_aprobar": []
+  },
+  "materias": [
+    {
+      "id": 1,
+      "nombre": "Análisis Matemático I",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 5,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 2,
+      "nombre": "Álgebra y Geometría Analítica",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 5,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 3,
+      "nombre": "Física I",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 5,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 4,
+      "nombre": "Inglés I",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 5,
+      "nombre": "Lógica y Estructuras Discretas",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 6,
+      "nombre": "Algoritmos y Estructuras de Datos",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 5,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 7,
+      "nombre": "Arquitecturas de Computadoras",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 8,
+      "nombre": "Sistemas y Procesos de Negocio",
+      "tipo": "nucleo",
+      "nivel": 1,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 9,
+      "nombre": "Análisis Matemático II",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 5,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 1,
+          "nombre": "Análisis Matemático I"
+        },
+        {
+          "id": 2,
+          "nombre": "Álgebra y Geometría Analítica"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 10,
+      "nombre": "Física II",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 5,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 1,
+          "nombre": "Análisis Matemático I"
+        },
+        {
+          "id": 3,
+          "nombre": "Física I"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 11,
+      "nombre": "Ingeniería y Sociedad",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 12,
+      "nombre": "Inglés II",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 4,
+          "nombre": "Inglés I"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 13,
+      "nombre": "Sintaxis y Semántica del Lenguaje",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 5,
+          "nombre": "Lógica y Estructuras Discretas"
+        },
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 14,
+      "nombre": "Paradigmas de Programación",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 5,
+          "nombre": "Lógica y Estructuras Discretas"
+        },
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 15,
+      "nombre": "Sistemas Operativos",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 7,
+          "nombre": "Arquitecturas de Computadoras"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 16,
+      "nombre": "Análisis de Sistemas de Información",
+      "tipo": "nucleo",
+      "nivel": 2,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 6,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": true,
+      "correlativas_para_cursar": [
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        },
+        {
+          "id": 8,
+          "nombre": "Sistemas y Procesos de Negocio"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 17,
+      "nombre": "Probabilidades y Estadística",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 1,
+          "nombre": "Análisis Matemático I"
+        },
+        {
+          "id": 2,
+          "nombre": "Álgebra y Geometría Analítica"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 18,
+      "nombre": "Economía",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 1,
+          "nombre": "Análisis Matemático I"
+        },
+        {
+          "id": 2,
+          "nombre": "Álgebra y Geometría Analítica"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "nombre": "Bases de Datos",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 13,
+          "nombre": "Sintaxis y Semántica del Lenguaje"
+        },
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 5,
+          "nombre": "Lógica y Estructuras Discretas"
+        },
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "nombre": "Desarrollo de Software",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 14,
+          "nombre": "Paradigmas de Programación"
+        },
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 5,
+          "nombre": "Lógica y Estructuras Discretas"
+        },
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "nombre": "Comunicación de Datos",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 3,
+          "nombre": "Física I"
+        },
+        {
+          "id": 7,
+          "nombre": "Arquitecturas de Computadoras"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "nombre": "Análisis Numérico",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 9,
+          "nombre": "Análisis Matemático II"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 1,
+          "nombre": "Análisis Matemático I"
+        },
+        {
+          "id": 2,
+          "nombre": "Álgebra y Geometría Analítica"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "nombre": "Diseño de Sistemas de Información",
+      "tipo": "nucleo",
+      "nivel": 3,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 6,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": true,
+      "correlativas_para_cursar": [
+        {
+          "id": 14,
+          "nombre": "Paradigmas de Programación"
+        },
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 4,
+          "nombre": "Inglés I"
+        },
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        },
+        {
+          "id": 8,
+          "nombre": "Sistemas y Procesos de Negocio"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "nombre": "Legislación",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 11,
+          "nombre": "Ingeniería y Sociedad"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 25,
+      "nombre": "Ingeniería y Calidad de Software",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 19,
+          "nombre": "Bases de Datos"
+        },
+        {
+          "id": 20,
+          "nombre": "Desarrollo de Software"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 13,
+          "nombre": "Sintaxis y Semántica del Lenguaje"
+        },
+        {
+          "id": 14,
+          "nombre": "Paradigmas de Programación"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "nombre": "Redes de Datos",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 15,
+          "nombre": "Sistemas Operativos"
+        },
+        {
+          "id": 21,
+          "nombre": "Comunicación de Datos"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 27,
+      "nombre": "Investigación Operativa",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": 8,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 17,
+          "nombre": "Probabilidades y Estadística"
+        },
+        {
+          "id": 22,
+          "nombre": "Análisis Numérico"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": 28,
+      "nombre": "Simulación",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 17,
+          "nombre": "Probabilidades y Estadística"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 9,
+          "nombre": "Análisis Matemático II"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "nombre": "Tecnologías para la Automatización",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 10,
+          "nombre": "Física II"
+        },
+        {
+          "id": 22,
+          "nombre": "Análisis Numérico"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 9,
+          "nombre": "Análisis Matemático II"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "nombre": "Administración de Sistemas de Información",
+      "tipo": "nucleo",
+      "nivel": 4,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 6,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": true,
+      "correlativas_para_cursar": [
+        {
+          "id": 18,
+          "nombre": "Economía"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "nombre": "Inteligencia Artificial",
+      "tipo": "nucleo",
+      "nivel": 5,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 28,
+          "nombre": "Simulación"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 17,
+          "nombre": "Probabilidades y Estadística"
+        },
+        {
+          "id": 22,
+          "nombre": "Análisis Numérico"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "nombre": "Ciencia de Datos",
+      "tipo": "nucleo",
+      "nivel": 5,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 28,
+          "nombre": "Simulación"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 17,
+          "nombre": "Probabilidades y Estadística"
+        },
+        {
+          "id": 19,
+          "nombre": "Bases de Datos"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "nombre": "Sistemas de Gestión",
+      "tipo": "nucleo",
+      "nivel": 5,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 4,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 18,
+          "nombre": "Economía"
+        },
+        {
+          "id": 27,
+          "nombre": "Investigación Operativa"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "nombre": "Gestión Gerencial",
+      "tipo": "nucleo",
+      "nivel": 5,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 24,
+          "nombre": "Legislación"
+        },
+        {
+          "id": 30,
+          "nombre": "Administración de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 18,
+          "nombre": "Economía"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "nombre": "Seguridad en los Sistemas de Información",
+      "tipo": "nucleo",
+      "nivel": 5,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "integradora": false,
+      "correlativas_para_cursar": [
+        {
+          "id": 26,
+          "nombre": "Redes de Datos"
+        },
+        {
+          "id": 30,
+          "nombre": "Administración de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 20,
+          "nombre": "Desarrollo de Software"
+        },
+        {
+          "id": 21,
+          "nombre": "Comunicación de Datos"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "nombre": "Proyecto Final",
+      "tipo": "nucleo",
+      "nivel": 5,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 6,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "integradora": true,
+      "correlativas_para_cursar": [
+        {
+          "id": 25,
+          "nombre": "Ingeniería y Calidad de Software"
+        },
+        {
+          "id": 26,
+          "nombre": "Redes de Datos"
+        },
+        {
+          "id": 30,
+          "nombre": "Administración de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 12,
+          "nombre": "Inglés II"
+        },
+        {
+          "id": 20,
+          "nombre": "Desarrollo de Software"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "nombre": "Sistemas de Tiempo Real",
+      "tipo": "electiva",
+      "nivel": 3,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "correlativas_para_cursar": [
+        {
+          "id": 15,
+          "nombre": "Sistemas Operativos"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 7,
+          "nombre": "Arquitecturas de Computadoras"
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "nombre": "Tecnología y Gestión Web",
+      "tipo": "electiva",
+      "nivel": 3,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 13,
+          "nombre": "Sintaxis y Semántica del Lenguaje"
+        },
+        {
+          "id": 15,
+          "nombre": "Sistemas Operativos"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "nombre": "Sistemas de Transmisión y Redes Inalámbricas",
+      "tipo": "electiva",
+      "nivel": 3,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 9,
+          "nombre": "Análisis Matemático II"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 7,
+          "nombre": "Arquitecturas de Computadoras"
+        }
+      ]
+    },
+    {
+      "id": "E4",
+      "nombre": "Responsabilidad Social e Institucional",
+      "tipo": "electiva",
+      "nivel": 3,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 8,
+          "nombre": "Sistemas y Procesos de Negocio"
+        },
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": "E5",
+      "nombre": "Comunicación Profesional",
+      "tipo": "electiva",
+      "nivel": 3,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "correlativas_para_cursar": [
+        {
+          "id": 11,
+          "nombre": "Ingeniería y Sociedad"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 8,
+          "nombre": "Sistemas y Procesos de Negocio"
+        }
+      ]
+    },
+    {
+      "id": "E6",
+      "nombre": "Administración de Base de Datos",
+      "tipo": "electiva",
+      "nivel": 4,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 19,
+          "nombre": "Bases de Datos"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 15,
+          "nombre": "Sistemas Operativos"
+        }
+      ]
+    },
+    {
+      "id": "E7",
+      "nombre": "Desarrollo de Software Cloud",
+      "tipo": "electiva",
+      "nivel": 4,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 15,
+          "nombre": "Sistemas Operativos"
+        },
+        {
+          "id": 20,
+          "nombre": "Desarrollo de Software"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 13,
+          "nombre": "Sintaxis y Semántica del Lenguaje"
+        },
+        {
+          "id": 14,
+          "nombre": "Paradigmas de Programación"
+        }
+      ]
+    },
+    {
+      "id": "E8",
+      "nombre": "Diseño Inclusivo para Usuarios con Discapacidad",
+      "tipo": "electiva",
+      "nivel": 4,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": "E9",
+      "nombre": "Metodologías Ágiles",
+      "tipo": "electiva",
+      "nivel": 4,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "correlativas_para_cursar": [
+        {
+          "id": 19,
+          "nombre": "Bases de Datos"
+        },
+        {
+          "id": 20,
+          "nombre": "Desarrollo de Software"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 16,
+          "nombre": "Análisis de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": "E10",
+      "nombre": "Tecnologías para la Explotación de la Información",
+      "tipo": "electiva",
+      "nivel": 4,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 17,
+          "nombre": "Probabilidades y Estadística"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 14,
+          "nombre": "Paradigmas de Programación"
+        }
+      ]
+    },
+    {
+      "id": "E11",
+      "nombre": "Aplicaciones Móviles",
+      "tipo": "electiva",
+      "nivel": 4,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 14,
+          "nombre": "Paradigmas de Programación"
+        },
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 6,
+          "nombre": "Algoritmos y Estructuras de Datos"
+        }
+      ]
+    },
+    {
+      "id": "E12",
+      "nombre": "Ingeniería en Calidad",
+      "tipo": "electiva",
+      "nivel": 5,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "correlativas_para_cursar": [
+        {
+          "id": 30,
+          "nombre": "Administración de Sistemas de Información"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": "E13",
+      "nombre": "Protocolos y Seguridad en Redes Inalámbricas",
+      "tipo": "electiva",
+      "nivel": 5,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 21,
+          "nombre": "Comunicación de Datos"
+        },
+        {
+          "id": 26,
+          "nombre": "Redes de Datos"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 9,
+          "nombre": "Análisis Matemático II"
+        },
+        {
+          "id": 10,
+          "nombre": "Física II"
+        }
+      ]
+    },
+    {
+      "id": "E14",
+      "nombre": "Sistemas en la Industria 4.0",
+      "tipo": "electiva",
+      "nivel": 5,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": 6,
+      "correlativas_para_cursar": [
+        {
+          "id": 19,
+          "nombre": "Bases de Datos"
+        },
+        {
+          "id": 21,
+          "nombre": "Comunicación de Datos"
+        },
+        {
+          "id": 25,
+          "nombre": "Ingeniería y Calidad de Software"
+        },
+        {
+          "id": 26,
+          "nombre": "Redes de Datos"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 7,
+          "nombre": "Arquitecturas de Computadoras"
+        }
+      ]
+    },
+    {
+      "id": "E15",
+      "nombre": "Tecnologías de Información para la Gestión Empresarial",
+      "tipo": "electiva",
+      "nivel": 5,
+      "cuatrimestre": 1,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": 4,
+      "correlativas_para_cursar": [
+        {
+          "id": 25,
+          "nombre": "Ingeniería y Calidad de Software"
+        }
+      ],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 23,
+          "nombre": "Diseño de Sistemas de Información"
+        }
+      ]
+    },
+    {
+      "id": "E16",
+      "nombre": "Emprendedorismo",
+      "tipo": "electiva",
+      "nivel": 5,
+      "cuatrimestre": null,
+      "horas_semanales_regimen_anual": 2,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "correlativas_para_cursar": [
+        {
+          "id": 18,
+          "nombre": "Economía"
+        },
+        {
+          "id": 24,
+          "nombre": "Legislación"
+        }
+      ],
+      "correlativas_para_aprobar_final": []
+    },
+    {
+      "id": "E17",
+      "nombre": "Gestión Operativa y Seguridad en Redes",
+      "tipo": "electiva",
+      "nivel": 5,
+      "cuatrimestre": 2,
+      "horas_semanales_regimen_anual": 3,
+      "horas_semanales_regimen_cuatrimestral": null,
+      "correlativas_para_cursar": [],
+      "correlativas_para_aprobar_final": [
+        {
+          "id": 26,
+          "nombre": "Redes de Datos"
+        }
+      ]
+    }
+  ]
+}

@@ -169,6 +169,19 @@ function EditorNota({ materia, nota, onGuardar, onCerrar }) {
   const total = nota?.tareas?.length ?? 0
 
   useEffect(() => {
+    const scrollY = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, scrollY)
+    }
+  }, [])
+
+  useEffect(() => {
     const manejarTecla = (e) => {
       if (e.key === 'Escape') onCerrar()
     }
