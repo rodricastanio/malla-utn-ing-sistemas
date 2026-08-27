@@ -4331,21 +4331,19 @@ button.nt-card:active {
 /* Sheet a pantalla completa en móvil */
 @media (max-width: 640px) {
   .overlay:has(.modal-nota) {
-    place-items: end center;
-    padding: 0;
+    place-items: center;
+    padding: 1rem;
     overflow: hidden;
     background: rgba(0, 0, 0, 0.95);
   }
 
   .modal-nota {
-    max-width: none;
-    width: 100%;
-    max-height: calc(100dvh - env(safe-area-inset-top, 0px));
-    height: calc(100dvh - env(safe-area-inset-top, 0px));
-    border-radius: 20px 20px 0 0;
-    border-bottom: none;
-    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
-    animation: nt-sheet-up 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    max-width: 520px;
+    width: calc(100% - 2rem);
+    max-height: 80vh;
+    border-radius: 20px;
+    padding: 1rem;
+    animation: pop-in 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
