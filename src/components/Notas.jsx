@@ -1,6 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, ChevronLeft, NotebookPen, Plus, StickyNote, Trash2 } from 'lucide-react'
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { Check, ChevronLeft, GripVertical, NotebookPen, Plus, StickyNote, Trash2 } from 'lucide-react'
 import { claveElectiva, claveNucleo, horasMateria } from '../lib/plan'
 
 const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
@@ -42,18 +58,15 @@ function formatearRelativo(iso) {
 
 const etiquetaPeriodo = (m) => (m.cuatrimestre != null ? `${m.cuatrimestre}º cuatr.` : 'Anual')
 
-function ordenarTareas(tareas) {
-  const activas = tareas.filter((t) => t.estado !== 'hecha')
-  const hechas = tareas.filter((t) => t.estado === 'hecha')
-  return [...activas, ...hechas]
-}
-
-function contarEstados(tareas) {
-  return {
-    pendiente: tareas.filter((t) => t.estado === 'pendiente').length,
-    curso: tareas.filter((t) => t.estado === 'curso').length,
-    hecha: tareas.filter((t) => t.estado === 'hecha').length,
+// Siempre persistimos el arreglo agrupado: pendientes → en curso → completadas.
+function normalizar(tareas) {
+  const grupos = { pendiente: [], curso: [], hecha: [] }
+  for (const t of tareas) {
+    if (t.estado === 'curso') grupos.curso.push(t)
+    else if (t.estado === 'hecha') grupos.hecha.push(t)
+    else grupos.pendiente.push(t)
   }
+  return [...grupos.pendiente, ...grupos.curso, ...grupos.hecha]
 }
 
 function EstadoPop({ valor, onElegir }) {
@@ -142,9 +155,54 @@ function EstadoPop({ valor, onElegir }) {
   )
 }
 
-function FilaTarea({ tarea, onToggle, onEstado, onBorrar }) {
+function TareaSortable({ tarea, onToggle, onEstado, onBorrar, onRenombrar }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: tarea.id,
+  })
+  const [editando, setEditando] = useState(false)
+  const [texto, setTexto] = useState(tarea.texto)
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (editando) {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    }
+  }, [editando])
+
+  const cancelar = () => {
+    setTexto(tarea.texto)
+    setEditando(false)
+  }
+
+  const confirmar = () => {
+    const limpio = texto.trim()
+    if (limpio && limpio !== tarea.texto) onRenombrar(tarea.id, limpio)
+    else setTexto(tarea.texto)
+    setEditando(false)
+  }
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
-    <li className={`nt-row${tarea.estado === 'hecha' ? ' hecha' : ''}`}>
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`nt-row${tarea.estado === 'hecha' ? ' hecha' : ''}${isDragging ? ' arrastrando' : ''}`}
+    >
+      <button
+        type="button"
+        className="nt-grip"
+        {...attributes}
+        {...listeners}
+        aria-label="Reordenar tarea"
+        title="Arrastrar para reordenar"
+      >
+        <GripVertical size={13} />
+      </button>
       <button
         type="button"
         className={`nt-check nt-e-${tarea.estado}`}
@@ -153,7 +211,24 @@ function FilaTarea({ tarea, onToggle, onEstado, onBorrar }) {
       >
         {tarea.estado === 'hecha' && <Check size={13} strokeWidth={3.5} />}
       </button>
-      <span className="nt-row-texto">{tarea.texto}</span>
+      {editando ? (
+        <input
+          ref={inputRef}
+          className="nt-row-input"
+          value={texto}
+          aria-label="Editar tarea"
+          onChange={(e) => setTexto(e.target.value)}
+          onBlur={confirmar}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') confirmar()
+            if (e.key === 'Escape') cancelar()
+          }}
+        />
+      ) : (
+        <span className="nt-row-texto" onClick={() => setEditando(true)} title="Clic para editar">
+          {tarea.texto}
+        </span>
+      )}
       <EstadoPop valor={tarea.estado} onElegir={(estado) => onEstado(tarea.id, estado)} />
       <button type="button" className="nt-borrar" onClick={() => onBorrar(tarea.id)} aria-label="Eliminar tarea">
         <Trash2 size={13} />
@@ -162,13 +237,59 @@ function FilaTarea({ tarea, onToggle, onEstado, onBorrar }) {
   )
 }
 
-function EditorNota({ materia, nota, onGuardar, onCerrar }) {
+function ListaSeccion({ titulo, tareas, onReordenar, onToggle, onEstado, onBorrar, onRenombrar }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
+  const ids = useMemo(() => tareas.map((t) => t.id), [tareas])
+
+  const onDragEnd = (e) => {
+    const { active, over } = e
+    if (!over || active.id === over.id) return
+    const viejo = ids.indexOf(active.id)
+    const nuevo = ids.indexOf(over.id)
+    if (viejo < 0 || nuevo < 0) return
+    onReordenar(arrayMove(tareas, viejo, nuevo).map((t) => t.id))
+  }
+
+  return (
+    <section className="nt-seccion">
+      <div className="nt-seccion-head">
+        <span>{titulo}</span>
+        <span className="nt-sec-cuenta">{tareas.length}</span>
+      </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          <ul className="nt-lista">
+            {tareas.map((t) => (
+              <TareaSortable
+                key={t.id}
+                tarea={t}
+                onToggle={onToggle}
+                onEstado={onEstado}
+                onBorrar={onBorrar}
+                onRenombrar={onRenombrar}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
+    </section>
+  )
+}
+
+function EditorNota({ materia, nota, onGuardar, onCerrar, enSheet }) {
   const [texto, setTexto] = useState('')
-  const tareas = useMemo(() => ordenarTareas(nota?.tareas ?? []), [nota])
-  const conteo = useMemo(() => contarEstados(nota?.tareas ?? []), [nota])
-  const total = nota?.tareas?.length ?? 0
+  const tareas = nota?.tareas ?? []
+  const pendientes = tareas.filter((t) => t.estado === 'pendiente')
+  const cursos = tareas.filter((t) => t.estado === 'curso')
+  const hechas = tareas.filter((t) => t.estado === 'hecha')
+  const conteo = { pendiente: pendientes.length, curso: cursos.length, hecha: hechas.length }
+  const total = tareas.length
 
   useEffect(() => {
+    if (!enSheet) return undefined
     const scrollY = window.scrollY
     document.body.style.position = 'fixed'
     document.body.style.top = `-${scrollY}px`
@@ -179,111 +300,179 @@ function EditorNota({ materia, nota, onGuardar, onCerrar }) {
       document.body.style.width = ''
       window.scrollTo(0, scrollY)
     }
-  }, [])
+  }, [enSheet])
 
   useEffect(() => {
+    if (!enSheet) return undefined
     const manejarTecla = (e) => {
       if (e.key === 'Escape') onCerrar()
     }
     window.addEventListener('keydown', manejarTecla)
     return () => window.removeEventListener('keydown', manejarTecla)
-  }, [onCerrar])
+  }, [enSheet, onCerrar])
 
   const persistir = (nuevas) =>
-    onGuardar({ id: materia.key, tareas: nuevas, actualizada: new Date().toISOString() })
+    onGuardar({ id: materia.key, tareas: normalizar(nuevas), actualizada: new Date().toISOString() })
 
   const agregar = () => {
     const limpio = texto.trim()
     if (!limpio) return
-    persistir([...(nota?.tareas ?? []), { id: nuevoId(), texto: limpio, estado: 'pendiente' }])
+    persistir([...tareas, { id: nuevoId(), texto: limpio, estado: 'pendiente' }])
     setTexto('')
   }
 
   const cambiarEstado = (id, estado) =>
-    persistir((nota?.tareas ?? []).map((t) => (t.id === id ? { ...t, estado } : t)))
+    persistir(tareas.map((t) => (t.id === id ? { ...t, estado } : t)))
 
   const alternar = (t) => cambiarEstado(t.id, t.estado === 'hecha' ? 'pendiente' : 'hecha')
 
-  const borrar = (id) => persistir((nota?.tareas ?? []).filter((t) => t.id !== id))
+  const borrar = (id) => persistir(tareas.filter((t) => t.id !== id))
+
+  const renombrar = (id, nuevoTexto) =>
+    persistir(tareas.map((t) => (t.id === id ? { ...t, texto: nuevoTexto } : t)))
+
+  const reordenar = (estado, nuevaIds) => {
+    const grupos = { pendiente: [], curso: [], hecha: [] }
+    for (const t of tareas) {
+      if (t.estado === 'curso') grupos.curso.push(t)
+      else if (t.estado === 'hecha') grupos.hecha.push(t)
+      else grupos.pendiente.push(t)
+    }
+    grupos[estado] = nuevaIds.map((id) => tareas.find((t) => t.id === id)).filter(Boolean)
+    persistir([...grupos.pendiente, ...grupos.curso, ...grupos.hecha])
+  }
 
   const pct = total > 0 ? (n) => `${Math.max((n / total) * 100, n > 0 ? 8 : 0)}%` : () => '0%'
 
-  return (
-    <div className="overlay overlay-oscuro" onClick={onCerrar}>
-      <div className="modal modal-nota" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-        <div className="nt-sheet-head">
-          <button type="button" className="nt-back" onClick={onCerrar}>
-            <ChevronLeft size={18} />
-            Notas
-          </button>
-          <span className="nt-sheet-fecha">{formatearRelativo(nota?.actualizada)}</span>
-        </div>
-
-        <h2 className="nt-sheet-titulo">{materia.m.nombre}</h2>
-
-        <div className="nt-chips">
-          <span className={`badge badge-c${materia.m.cuatrimestre ?? 0}`}>{etiquetaPeriodo(materia.m)}</span>
-          <span className="badge badge-nivel">Nivel {materia.m.nivel}</span>
-          {materia.m.horas_anuales !== 0 && horasMateria(materia.m) && (
-            <span className="badge badge-horas">{horasMateria(materia.m)}</span>
-          )}
-          {total > 0 && (
-            <span className="badge badge-cuenta">
-              {conteo.hecha} de {total} completadas
-            </span>
-          )}
-        </div>
-
-        {total > 0 && (
-          <>
-            <div className="nt-progreso" role="img" aria-label={`${conteo.pendiente} pendientes, ${conteo.curso} en curso, ${conteo.hecha} completadas`}>
-              <span className="nt-seg nt-e-pendiente" style={{ width: pct(conteo.pendiente) }} />
-              <span className="nt-seg nt-e-curso" style={{ width: pct(conteo.curso) }} />
-              <span className="nt-seg nt-e-hecha" style={{ width: pct(conteo.hecha) }} />
-            </div>
-            <div className="nt-leyenda">
-              <span>{conteo.pendiente} pendientes</span>
-              <span className="dot-curso" /> {conteo.curso} en curso
-              <span className="dot-hecha" /> {conteo.hecha} completadas
-            </div>
-          </>
-        )}
-
-        {total === 0 ? (
-          <p className="nt-vacio-editor">Sin tareas todavía. Agregá la primera abajo.</p>
-        ) : (
-          <ul className="nt-lista">
-            {tareas.map((t) => (
-              <FilaTarea key={t.id} tarea={t} onToggle={alternar} onEstado={cambiarEstado} onBorrar={borrar} />
-            ))}
-          </ul>
-        )}
-
-        <form
-          className="nt-add"
-          onSubmit={(e) => {
-            e.preventDefault()
-            agregar()
-          }}
-        >
-          <span className="nt-add-icono">
-            <Plus size={16} />
-          </span>
-          <input
-            type="text"
-            value={texto}
-            placeholder="Agregar una tarea…"
-            aria-label="Nueva tarea"
-            onChange={(e) => setTexto(e.target.value)}
-          />
-        </form>
+  const contenido = (
+    <>
+      <div className="nt-sheet-head">
+        <button type="button" className="nt-back" onClick={onCerrar}>
+          <ChevronLeft size={18} />
+          {enSheet ? 'Notas' : 'Volver'}
+        </button>
+        <span className="nt-sheet-fecha">{formatearRelativo(nota?.actualizada)}</span>
       </div>
+
+      <h2 className="nt-sheet-titulo">{materia.m.nombre}</h2>
+
+      <div className="nt-chips">
+        <span className={`badge badge-c${materia.m.cuatrimestre ?? 0}`}>{etiquetaPeriodo(materia.m)}</span>
+        <span className="badge badge-nivel">Nivel {materia.m.nivel}</span>
+        {materia.m.horas_anuales !== 0 && horasMateria(materia.m) && (
+          <span className="badge badge-horas">{horasMateria(materia.m)}</span>
+        )}
+        {total > 0 && <span className="badge badge-cuenta">{conteo.hecha} de {total} completadas</span>}
+      </div>
+
+      {total > 0 && (
+        <>
+          <div
+            className="nt-progreso"
+            role="img"
+            aria-label={`${conteo.pendiente} pendientes, ${conteo.curso} en curso, ${conteo.hecha} completadas`}
+          >
+            <span className="nt-seg nt-e-pendiente" style={{ width: pct(conteo.pendiente) }} />
+            <span className="nt-seg nt-e-curso" style={{ width: pct(conteo.curso) }} />
+            <span className="nt-seg nt-e-hecha" style={{ width: pct(conteo.hecha) }} />
+          </div>
+          <div className="nt-leyenda">
+            <span>{conteo.pendiente} pendientes</span>
+            <span className="dot-curso" /> {conteo.curso} en curso
+            <span className="dot-hecha" /> {conteo.hecha} completadas
+          </div>
+        </>
+      )}
+
+      <form
+        className="nt-add"
+        onSubmit={(e) => {
+          e.preventDefault()
+          agregar()
+        }}
+      >
+        <span className="nt-add-icono">
+          <Plus size={16} />
+        </span>
+        <input
+          type="text"
+          value={texto}
+          placeholder="Agregar una tarea…"
+          aria-label="Nueva tarea"
+          onChange={(e) => setTexto(e.target.value)}
+        />
+      </form>
+
+      {total === 0 ? (
+        <p className="nt-vacio-editor">Sin tareas todavía. Agregá la primera arriba.</p>
+      ) : (
+        <div className="nt-secciones">
+          {pendientes.length > 0 && (
+            <ListaSeccion
+              titulo="Pendientes"
+              tareas={pendientes}
+              onReordenar={(ids) => reordenar('pendiente', ids)}
+              onToggle={alternar}
+              onEstado={cambiarEstado}
+              onBorrar={borrar}
+              onRenombrar={renombrar}
+            />
+          )}
+          {cursos.length > 0 && (
+            <ListaSeccion
+              titulo="En curso"
+              tareas={cursos}
+              onReordenar={(ids) => reordenar('curso', ids)}
+              onToggle={alternar}
+              onEstado={cambiarEstado}
+              onBorrar={borrar}
+              onRenombrar={renombrar}
+            />
+          )}
+          {hechas.length > 0 && (
+            <ListaSeccion
+              titulo="Completadas"
+              tareas={hechas}
+              onReordenar={(ids) => reordenar('hecha', ids)}
+              onToggle={alternar}
+              onEstado={cambiarEstado}
+              onBorrar={borrar}
+              onRenombrar={renombrar}
+            />
+          )}
+        </div>
+      )}
+    </>
+  )
+
+  if (enSheet) {
+    return (
+      <div className="overlay nt-sheet-overlay" onClick={onCerrar}>
+        <div className="nt-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+          <div className="nt-sheet-grip" />
+          {contenido}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="nt-editor" role="dialog" aria-modal="false">
+      {contenido}
     </div>
   )
 }
 
 export default function Notas({ plan, efectivos, lista, guardar, irA, portalRef }) {
+  const [esCompacto, setEsCompacto] = useState(() => window.innerWidth < 900)
+  const [seleccionKey, setSeleccionKey] = useState(null)
   const [abiertaKey, setAbiertaKey] = useState(null)
+
+  useEffect(() => {
+    const onResize = () => setEsCompacto(window.innerWidth < 900)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   const cursando = useMemo(() => {
     const todas = [
@@ -295,6 +484,12 @@ export default function Notas({ plan, efectivos, lista, guardar, irA, portalRef 
       .filter(({ key }) => (efectivos[key] ?? 0) === 1)
       .sort((a, b) => a.m.nivel - b.m.nivel || a.m.nombre.localeCompare(b.m.nombre))
   }, [plan, efectivos])
+
+  useEffect(() => {
+    if (!esCompacto && seleccionKey == null && cursando.length > 0) {
+      setSeleccionKey(cursando[0].key)
+    }
+  }, [esCompacto, seleccionKey, cursando])
 
   const porKey = useMemo(() => new Map(lista.map((n) => [n.id, n])), [lista])
 
@@ -311,7 +506,13 @@ export default function Notas({ plan, efectivos, lista, guardar, irA, portalRef 
     return { total, hechas, pendientes }
   }, [cursando, porKey])
 
+  const seleccion = seleccionKey ? cursando.find((c) => c.key === seleccionKey) : null
   const abierta = abiertaKey ? cursando.find((c) => c.key === abiertaKey) : null
+
+  const abrir = (key) => {
+    if (esCompacto) setAbiertaKey(key)
+    else setSeleccionKey(key)
+  }
 
   return (
     <section className="nt">
@@ -335,7 +536,7 @@ export default function Notas({ plan, efectivos, lista, guardar, irA, portalRef 
       </div>
 
       {cursando.length === 0 ? (
-        <div className="nt-card nt-vacio">
+        <div className="nt-vacio">
           <span className="nt-vacio-icono">
             <StickyNote size={30} />
           </span>
@@ -346,55 +547,75 @@ export default function Notas({ plan, efectivos, lista, guardar, irA, portalRef 
           </button>
         </div>
       ) : (
-        <div className="nt-grid">
-          {cursando.map(({ m, key }) => {
-            const nota = porKey.get(key)
-            const tareas = ordenarTareas(nota?.tareas ?? [])
-            const conteo = contarEstados(nota?.tareas ?? [])
-            const visibles = tareas.slice(0, 3)
-            const resto = tareas.length - visibles.length
-            return (
-              <button key={key} type="button" className="nt-card" onClick={() => setAbiertaKey(key)}>
-                <span className="nt-card-top">
-                  <span className={`nt-card-dot nt-e-${tareas[0]?.estado ?? 'pendiente'}`} />
-                  <span className={`badge badge-c${m.cuatrimestre ?? 0}`}>{etiquetaPeriodo(m)}</span>
-                  <span className="nt-card-fecha">{formatearRelativo(nota?.actualizada)}</span>
-                </span>
-                <strong className="nt-card-titulo">{m.nombre}</strong>
-                {tareas.length === 0 ? (
-                  <span className="nt-prev-vacio">Sin tareas todavía</span>
-                ) : (
-                  <span className="nt-preview">
-                    {visibles.map((t) => (
-                      <span key={t.id} className={`nt-prev-item${t.estado === 'hecha' ? ' hecha' : ''}`}>
-                        <span className={`nt-mini nt-e-${t.estado}`} />
-                        {t.texto}
+        <div className="nt-workbench">
+          <aside className="nt-sujetos" aria-label="Materias cursando">
+            <div className="nt-sujetos-head">
+              <span>Materias cursando</span>
+              <span className="nt-sujetos-cuenta">{cursando.length}</span>
+            </div>
+            <ul className="nt-sujetos-lista">
+              {cursando.map(({ m, key }) => {
+                const nota = porKey.get(key)
+                const tareas = nota?.tareas ?? []
+                const hechas = tareas.filter((t) => t.estado === 'hecha').length
+                const activas = tareas.length - hechas
+                const seleccionada = key === seleccionKey || key === abiertaKey
+                const pctSujeto = tareas.length > 0 ? Math.round((hechas / tareas.length) * 100) : 0
+                const dotEstado =
+                  (tareas.find((t) => t.estado !== 'hecha') ?? tareas[0])?.estado ?? 'pendiente'
+                return (
+                  <li key={key}>
+                    <button
+                      type="button"
+                      className={`nt-sujeto${seleccionada ? ' sel' : ''}`}
+                      onClick={() => abrir(key)}
+                      aria-current={seleccionada ? 'true' : undefined}
+                    >
+                      <span className={`nt-sujeto-dot nt-e-${dotEstado}`} />
+                      <span className="nt-sujeto-nombre">{m.nombre}</span>
+                      {activas > 0 && <span className="nt-sujeto-cuenta">{activas}</span>}
+                      <span className="nt-sujeto-bar">
+                        <span style={{ width: `${pctSujeto}%` }} />
                       </span>
-                    ))}
-                    {resto > 0 && <span className="nt-mas">+{resto} más…</span>}
-                  </span>
-                )}
-                <span className="nt-card-foot">
-                  {tareas.length === 0 ? (
-                    <span className="nt-pill nt-e-pendiente">Sin tareas</span>
-                  ) : conteo.pendiente + conteo.curso === 0 ? (
-                    <span className="nt-pill nt-e-hecha">Al día</span>
-                  ) : (
-                    <>
-                      {conteo.curso > 0 && <span className="nt-pill nt-e-curso">{conteo.curso} en curso</span>}
-                      <span className="nt-pill nt-e-pendiente">{conteo.pendiente + conteo.curso} pendientes</span>
-                    </>
-                  )}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </aside>
+
+          <div className="nt-panel">
+            {seleccion ? (
+              <EditorNota
+                materia={seleccion}
+                nota={porKey.get(seleccion.key)}
+                onGuardar={guardar}
+                onCerrar={() => setSeleccionKey(null)}
+                enSheet={false}
+              />
+            ) : (
+              <div className="nt-vacio nt-vacio-panel">
+                <span className="nt-vacio-icono">
+                  <StickyNote size={30} />
                 </span>
-              </button>
-            )
-          })}
+                <strong>Elegí una materia</strong>
+                <p>Seleccioná una materia de la lista para editar sus tareas.</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {abierta && portalRef?.current &&
+      {abierta &&
+        portalRef?.current &&
         createPortal(
-          <EditorNota materia={abierta} nota={porKey.get(abierta.key)} onGuardar={guardar} onCerrar={() => setAbiertaKey(null)} />,
+          <EditorNota
+            materia={abierta}
+            nota={porKey.get(abierta.key)}
+            onGuardar={guardar}
+            onCerrar={() => setAbiertaKey(null)}
+            enSheet
+          />,
           portalRef.current
         )}
     </section>

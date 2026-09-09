@@ -3709,7 +3709,7 @@ body::before {
 
 /* ── Notas (checklists por materia) ──────── */
 .nt {
-  max-width: 880px;
+  max-width: 1020px;
   margin: 0 auto;
   padding: 2rem 1.5rem 3rem;
   width: 100%;
@@ -3753,130 +3753,156 @@ body::before {
   color: var(--texto);
 }
 
-.nt-grid {
+.nt-workbench {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-  align-items: stretch;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 1.1rem;
+  align-items: start;
 }
 
-button.nt-card {
-  appearance: none;
-  text-align: left;
-  font-family: inherit;
-}
-
-.nt-card {
+/* Lista lateral de materias (sidebar Notion) */
+.nt-sujetos {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 1.05rem 1.15rem 0.95rem;
+  min-width: 0;
+  padding: 0.55rem;
   border-radius: 22px;
   background: var(--superficie);
   border: var(--borde-tarjeta);
   box-shadow: var(--sombra);
-  color: var(--texto);
-  cursor: pointer;
-  transition: transform 0.35s var(--elastico), box-shadow 0.25s var(--suave),
-    background-color 0.3s var(--suave);
 }
 
-button.nt-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--sombra-fuerte);
-}
-
-button.nt-card:focus-visible,
-.nt-check:focus-visible,
-.nt-pill:focus-visible,
-.nt-back:focus-visible,
-.nt-borrar:focus-visible {
-  outline: 3px solid var(--accento-suave);
-  outline-offset: 2px;
-}
-
-button.nt-card:active {
-  transform: scale(0.98);
-}
-
-.nt-card-top {
+.nt-sujetos-head {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gris);
 }
 
-.nt-card-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.nt-card-fecha {
-  margin-left: auto;
-  font-size: 0.72rem;
+.nt-sujetos-cuenta {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--gris-suave);
   color: var(--texto-secundario);
   font-variant-numeric: tabular-nums;
 }
 
-.nt-card-titulo {
-  font-size: 0.98rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-
-.nt-prev-vacio {
-  font-size: 0.82rem;
-  color: var(--texto-secundario);
-  font-style: italic;
-}
-
-.nt-preview {
+.nt-sujetos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.32rem;
-  min-width: 0;
+  gap: 0.15rem;
 }
 
-.nt-prev-item {
-  display: block;
-  font-size: 0.82rem;
-  color: var(--texto-secundario);
+button.nt-sujeto {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--texto);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s var(--suave);
+}
+
+button.nt-sujeto:hover {
+  background: var(--gris-suave);
+}
+
+button.nt-sujeto.sel {
+  background: var(--accento-suave);
+}
+
+button.nt-sujeto:focus-visible,
+.nt-check:focus-visible,
+.nt-pill:focus-visible,
+.nt-back:focus-visible,
+.nt-borrar:focus-visible,
+.nt-grip:focus-visible,
+.nt-row-input:focus-visible {
+  outline: 3px solid var(--accento-suave);
+  outline-offset: 2px;
+}
+
+.nt-sujeto-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--estado-color);
+  box-shadow: 0 0 0 3px var(--estado-fondo);
+}
+
+.nt-sujeto-nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.2s var(--suave);
 }
 
-.nt-prev-item.hecha {
-  text-decoration: line-through;
-  opacity: 0.65;
-}
-
-.nt-mini {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  margin-right: 0.45rem;
-  vertical-align: 1px;
-}
-
-.nt-mas {
-  font-size: 0.75rem;
+.nt-sujeto-cuenta {
+  flex: none;
+  font-size: 0.7rem;
+  font-weight: 700;
   color: var(--texto-secundario);
-  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
 }
 
-.nt-card-foot {
+.nt-sujeto-bar {
+  flex: 0 0 52px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--gris-suave);
+  overflow: hidden;
+}
+
+.nt-sujeto-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accento), var(--verde));
+}
+
+/* Panel editor (desktop) */
+.nt-panel {
+  min-width: 0;
+}
+
+.nt-editor {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: 0.55rem;
-  border-top: 1px solid var(--separador);
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.35rem 1.5rem 1.5rem;
+  border-radius: 22px;
+  background: var(--superficie);
+  border: var(--borde-tarjeta);
+  box-shadow: var(--sombra);
+  animation: fade-in 0.25s var(--suave);
+}
+
+.nt-sheet-titulo {
+  padding-right: 0;
+}
+
+.nt-vacio-panel {
+  min-height: 320px;
 }
 
 /* Estados pastel compartidos */
@@ -3916,8 +3942,7 @@ button.nt-card:active {
   filter: brightness(1.05);
 }
 
-.nt-card-dot,
-.nt-mini,
+.nt-sujeto-dot,
 .nt-opcion-dot {
   background: var(--estado-color);
 }
@@ -3986,13 +4011,7 @@ button.nt-card:active {
   flex-shrink: 0;
 }
 
-/* Checklist dentro de la nota */
-.modal-nota {
-  max-width: 640px;
-  display: flex;
-  flex-direction: column;
-}
-
+/* Head del editor / sheet */
 .nt-sheet-head {
   display: flex;
   align-items: center;
@@ -4108,23 +4127,66 @@ button.nt-card:active {
 
 .nt-lista {
   list-style: none;
-  margin: 0.9rem 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
 }
 
+.nt-secciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.nt-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.nt-seccion-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gris);
+}
+
+.nt-sec-cuenta {
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: var(--gris-suave);
+  color: var(--texto-secundario);
+  font-variant-numeric: tabular-nums;
+}
+
 .nt-row {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.6rem 0.15rem;
+  gap: 0.55rem;
+  padding: 0.5rem 0.5rem;
+  border-radius: 12px;
   border-bottom: 1px solid var(--separador);
   animation: nt-row-in 0.3s var(--suave);
 }
 
 .nt-row:last-child {
   border-bottom: none;
+}
+
+.nt-row:hover {
+  background: var(--gris-suave);
+}
+
+.nt-row.arrastrando {
+  opacity: 0.55;
+  z-index: 10;
+  background: var(--gris-suave);
 }
 
 @keyframes nt-row-in {
@@ -4138,14 +4200,45 @@ button.nt-card:active {
   }
 }
 
+/* Grip de arrastre (Notion) */
+.nt-grip {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 26px;
+  flex: none;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--gris);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s var(--suave), color 0.2s var(--suave), background-color 0.2s var(--suave);
+}
+
+.nt-row:hover .nt-grip,
+.nt-grip:focus-visible {
+  opacity: 1;
+}
+
+.nt-grip:hover {
+  color: var(--texto);
+  background: var(--separador);
+}
+
+.nt-grip:active {
+  cursor: grabbing;
+}
+
+/* Checkbox cuadrado estilo Notion con elástico Apple */
 .nt-check {
   position: relative;
   display: grid;
   place-items: center;
-  width: 23px;
-  height: 23px;
+  width: 21px;
+  height: 21px;
   flex-shrink: 0;
-  border-radius: 50%;
+  border-radius: 7px;
   border: 2px solid var(--separador);
   background: transparent;
   color: #ffffff;
@@ -4156,6 +4249,7 @@ button.nt-card:active {
 
 .nt-check:hover {
   transform: scale(1.12);
+  border-color: var(--estado-color);
 }
 
 .nt-check:active {
@@ -4170,14 +4264,14 @@ button.nt-card:active {
   content: '';
   width: 9px;
   height: 9px;
-  border-radius: 50%;
+  border-radius: 3px;
   background: var(--accento);
 }
 
 .nt-check.nt-e-hecha {
   border-color: var(--verde);
   background: var(--verde);
-  animation: nt-check-pop 0.3s var(--elastico);
+  animation: nt-check-pop 0.35s var(--elastico);
 }
 
 @keyframes nt-check-pop {
@@ -4196,15 +4290,35 @@ button.nt-card:active {
   flex: 1;
   min-width: 0;
   font-size: 0.92rem;
-  line-height: 1.35;
+  line-height: 1.4;
   word-break: break-word;
+  cursor: text;
+  border-radius: 7px;
   transition: color 0.25s var(--suave);
+}
+
+.nt-row-texto:hover {
+  background: var(--gris-suave);
 }
 
 .nt-row.hecha .nt-row-texto {
   color: var(--texto-secundario);
   text-decoration: line-through;
   text-decoration-thickness: 1.5px;
+}
+
+.nt-row-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid var(--accento);
+  border-radius: 9px;
+  background: var(--superficie);
+  color: var(--texto);
+  font-size: 0.92rem;
+  font-family: inherit;
+  box-shadow: 0 0 0 3px var(--accento-suave);
+  outline: none;
 }
 
 .nt-borrar {
@@ -4293,11 +4407,17 @@ button.nt-card:active {
 
 /* Estado vacío de la sección */
 .nt-vacio {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 0.55rem;
   padding: 3rem 1.5rem;
+  border-radius: 22px;
+  background: var(--superficie);
+  border: var(--borde-tarjeta);
+  box-shadow: var(--sombra);
   cursor: default;
 }
 
@@ -4328,43 +4448,78 @@ button.nt-card:active {
   margin-top: 0.6rem;
 }
 
-/* Sheet a pantalla completa en móvil */
-@media (max-width: 640px) {
-  .overlay:has(.modal-nota) {
-    place-items: center;
-    padding: 1rem;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.95);
+/* Workbench en una columna y editor como sheet en móvil/tablet */
+@media (max-width: 900px) {
+  .nt-workbench {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .modal-nota {
-    max-width: 520px;
-    width: calc(100% - 2rem);
-    max-height: 80vh;
+  .nt-panel {
+    display: none;
+  }
+
+  .nt-sujetos {
     border-radius: 20px;
-    padding: 1rem;
-    animation: pop-in 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .nt-sheet-overlay {
+    align-items: flex-end;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .nt-sheet {
+    width: 100%;
+    max-width: 640px;
+    max-height: 88dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 0.7rem 1.1rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
+    border-radius: 26px 26px 0 0;
+    background: var(--superficie-elevada);
+    border: var(--borde-tarjeta);
+    border-bottom: none;
+    box-shadow: var(--sombra-fuerte);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    animation: nt-sheet-up 0.4s var(--elastico);
   }
 
-  .nt-grid {
-    grid-template-columns: 1fr;
+  .nt-sheet-grip {
+    flex: none;
+    width: 42px;
+    height: 5px;
+    margin: 0 auto 0.2rem;
+    border-radius: 999px;
+    background: var(--gris);
+    opacity: 0.45;
   }
 
+  .nt-grip {
+    opacity: 0.45;
+  }
+
+  .nt-add input {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 640px) {
   .nt {
     padding: 1.25rem 1rem 6rem;
   }
 
   .nt-row {
     gap: 0.5rem;
-    padding: 0.55rem 0.1rem;
+    padding: 0.55rem 0.4rem;
   }
 
   .nt-check {
-    width: 26px;
-    height: 26px;
+    width: 25px;
+    height: 25px;
   }
 
   .nt-borrar {
@@ -4375,10 +4530,6 @@ button.nt-card:active {
 
   .nt-add {
     padding: 0.5rem 1rem 0.5rem 0.5rem;
-  }
-
-  .nt-add input {
-    font-size: 16px;
   }
 
   .nt-sheet-titulo {
